@@ -1,0 +1,7 @@
+{{ template "bash/helper" . }}
+
+if [ -e "{{ .default_shell }}" ]; then
+  sudo chsh -s {{ .default_shell }} {{ .chezmoi.username }} &> /dev/null
+else
+  echo "{{ .default_shell}} does not exist."
+fi

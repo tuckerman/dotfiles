@@ -1,0 +1,51 @@
+{{ template "bash/helper" . }}
+if_os darwin || exit
+if_ephemeral && exit
+
+# Disable guest profile in Chrome.
+sudo defaults write com.google.Chrome BrowserGuestModeEnabled -bool false
+
+# Show some extra info on the login screen.
+sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
+
+# Show ~/Library
+chflags nohidden ~/Library/
+
+# Don't create .DS_store files on network drives/usb drives
+sudo defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+sudo defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
+
+# Fuck autocorrect
+sudo defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled  -bool false
+sudo defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled   -bool false
+sudo defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
+sudo defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
+sudo defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled     -bool false
+
+# Don't show all extensions
+sudo defaults write NSGlobalDomain AppleShowAllExtensions -bool false
+
+# Don't show hidden files in the finder
+defaults write com.apple.Finder AppleShowAllFiles -bool false
+
+# Screenshots
+mkdir -p ${HOME}/Pictures/screenshots
+sudo defaults write com.apple.screencapture location -string "${HOME}/Pictures/Screenshots";
+sudo defaults write com.apple.screencapture type -string "jpg"
+
+# Expand some panels by default
+sudo defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
+sudo defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
+sudo defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
+sudo defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
+
+# Default finder to homedir
+sudo defaults write com.apple.finder NewWindowTarget -string "PfLo"
+sudo defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}/"
+
+# Textedit plain text by default
+sudo defaults write com.apple.TextEdit RichText -int 0
+
+# Fuck reopening windows on reboot
+defaults write com.apple.loginwindow TALLogoutSavesState -bool false
+defaults write com.apple.loginwindow LoginwindowLaunchesRelaunchApps -bool false

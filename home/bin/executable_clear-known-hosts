@@ -1,0 +1,3 @@
+#!/bin/bash
+
+truncate ${HOME}/.ssh/known_hosts --size 0

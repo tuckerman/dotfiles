@@ -1,0 +1,43 @@
+" Copyright Cameron Tuckerman-Lee. All rights reserved.
+
+set nocompatible
+set encoding=utf-8
+
+set ruler
+set number
+set relativenumber
+
+set wrap
+set autoindent
+set smartindent
+
+call plug#begin()
+Plug 'tpope/vim-sensible'
+Plug 'airblade/vim-gitgutter'
+Plug 'editorconfig/editorconfig-vim'
+Plug 'alker0/chezmoi.vim'
+Plug 'preservim/nerdtree'
+call plug#end()
+
+syntax on
+
+" Show hidden characters
+set list
+set listchars=tab:>-,trail:~,extends:>,precedes:<
+
+" Search improvements
+set hlsearch      " Highlight search results
+set incsearch     " Incremental search as you type
+set ignorecase    " Ignore case when searching
+set smartcase     " Override ignorecase if search contains uppercase
+
+" Enable mouse support
+set mouse=a
+
+" Persistent undo and backups
+set undofile      " Keep undo history between sessions
+set backup        " Enable backups
+set backupdir=$XDG_DATA_HOME/vim/backup/
+set directory=$XDG_DATA_HOME/vim/swap/  " Swap files
+set undodir=$XDG_DATA_HOME/vim/undo/    " Undo files
+set viminfofile=$XDG_DATA_HOME/vim/viminfo

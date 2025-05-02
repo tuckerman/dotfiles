@@ -1,0 +1,25 @@
+[user]
+  name = Cameron Tuckerman-Lee
+  email = {{ .email }}
+[push]
+  default = current
+[http]
+  cookiefile = {{ .chezmoi.homeDir }}/.config/git/gitcookies
+[filter "lfs"]
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
+[core]
+  excludesfile = {{ .chezmoi.homeDir }}/.config/git/gitignore
+[pager]
+  branch = false
+[include]
+  path = signing.gitconfig
+[alias]
+	next = stack next
+	prev = stack previous
+	reword = stack reword
+	amend = stack amend
+	sync = stack sync
+	run = stack run

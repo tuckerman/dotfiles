@@ -1,0 +1,9 @@
+# Copyright Cameron Jay Tuckermam-Lee. All rights reserved.
+
+font-family = Hasklug Nerd Font Mono
+desktop-notifications = true
+shell-integration-features = true
+
+keybind = global:cmd+\=toggle_quick_terminal
+working-directory = home
+window-inherit-working-directory = false

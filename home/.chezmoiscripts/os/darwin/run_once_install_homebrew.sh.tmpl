@@ -1,0 +1,4 @@
+{{ template "bash/helper" . }}
+if_ephemeral && exit
+
+{{ template "brew/install" . }}

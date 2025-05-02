@@ -1,0 +1,5 @@
+{{ template "bash/helper" . }}
+if_os darwin || exit
+if_command xcodebuild || exit
+
+ln -sfn ~/dev/github.com/tuckerman/pge-hfp/pge-hourly-pricing.15m.py ~/Library/Application\ Support/xbar/plugins/pge-hourly-pricing.15m.py

@@ -1,0 +1,7 @@
+{{ template "bash/helper" . }}
+if_os darwin || exit
+if_command xcodebuild || exit
+
+if /usr/bin/xcrun clang 2>&1 | grep -q license; then
+  sudo xcodebuild -license accept
+fi

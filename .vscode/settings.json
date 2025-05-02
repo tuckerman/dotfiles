@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "dot_vimrc": "viml",
+        ".chezmoiignore": "go-template",
+        "Brewfile.*": "ruby",
+        "**/.chezmoitemplates/**": "go-template",
+        "**/home/private_dot_ssh/readonly_config": "ssh_config",
+        "**/home/private_dot_ssh/config.d/*": "ssh_config",
+        "*.tmpl": "go-template"
+    }
+}

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+history_grep=$(grep $1 ~/.config/zsh/.zsh_history)
+shift 1
+
+for term in "${@}"; do
+  history_grep=$(echo "${history_grep}" | grep "${term}")
+done
+
+echo "${history_grep}"

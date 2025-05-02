@@ -1,0 +1,9 @@
+#!/bin/bash
+
+env_grep=$(env)
+
+for term in "${@}"; do
+  env_grep=$(echo "${env_grep}" | grep "${term}")
+done
+
+echo "${env_grep}"

@@ -1,0 +1,100 @@
+add_newline = false
+continuation_prompt = "[|](bold green) "
+command_timeout = 200
+scan_timeout = 10
+
+container.disabled = true
+docker_context.disabled = true
+localip.disabled = true
+
+[gcloud]
+symbol = "󱇶 "
+
+[hostname]
+ssh_only = false
+format = '[$hostname$ssh_symbol]($style) in '
+# ssh_symbol = ' 🌐'
+ssh_symbol = " "
+
+[sudo]
+disabled = false
+format = "with [$symbol]($style) "
+# symbol = "☣️ "
+symbol = "󰞄 "
+
+[username]
+show_always = true
+format = "[$user]($style)@"
+
+[custom.ssh]
+command = """ echo "${SSH_CLIENT}" | awk -F' ' '{print $1}' """
+when = """ test ! -z "${SSH_CLIENT}" """
+# format = "via [🐡 $output]($style) "
+# format = "via [󰣀 $output]($style) "
+format = "via [ $output]($style) "
+
+[custom.direnv]
+command = """ echo "${DIRENV_FILE}" | awk -F'/' '{print $(NF-1)"/"$(NF)}' """
+when = """ test ! -z "${DIRENV_FILE}" """
+# format = "with [📂 $output]($style) "
+format = "with [ $output]($style) "
+
+[env_var.CHEZMOI_ARGS]
+variable = "CHEZMOI_ARGS"
+# symbol = "🏠"
+symbol = ""
+style = "red bold"
+format = "in [$symbol chezmoi]($style) "
+
+
+# Nerd Font Stuff
+
+[os.symbols]
+Alpine = " "
+Arch = " "
+Debian = " "
+Gentoo = " "
+Illumos = "󰈸 "
+Linux = " "
+Macos = " "
+OpenBSD = "󰈺 "
+Ubuntu = " "
+
+[c]
+symbol = " "
+
+[directory]
+read_only = " 󰌾"
+
+[git_branch]
+symbol = " "
+
+[golang]
+symbol = " "
+
+[haskell]
+symbol = " "
+
+[hg_branch]
+symbol = " "
+
+[java]
+symbol = " "
+
+[memory_usage]
+symbol = "󰍛 "
+
+[nodejs]
+symbol = " "
+
+[package]
+symbol = "󰏗 "
+
+[python]
+symbol = " "
+
+[ruby]
+symbol = " "
+
+[rust]
+symbol = "󱘗 "

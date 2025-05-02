@@ -1,0 +1,7 @@
+check_helper_loaded
+
+if_command brew || (echo "brew is not installed. Please install Homebrew first." && exit 1)
+
+HOMEBREW_NO_AUTO_UPDATE=1 brew bundle --file=- <<EOF
+  {{ . }}
+EOF

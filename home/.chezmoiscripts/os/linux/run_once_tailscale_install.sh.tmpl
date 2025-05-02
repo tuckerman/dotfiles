@@ -1,0 +1,4 @@
+{{ template "bash/helper" . }}
+if_os linux || exit 0
+
+curl -fsSL https://tailscale.com/install.sh | sh

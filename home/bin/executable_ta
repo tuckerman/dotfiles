@@ -1,0 +1,43 @@
+#!/bin/bash
+
+SSH_AGENT=false
+SESSION="default"
+
+show_help() {
+  echo "Usage: ta [-A] [-s session_name] [-h]" >&2
+  echo "  -A  Use the current SSH agent socket inside the tmux session" >&2
+  echo "  -s  Specify the tmux session name" >&2
+  echo "  -h  Display this help message" >&2
+  exit 1
+}
+
+while getopts "As:h" opt; do
+  case $opt in
+  A)
+    SSH_AGENT=true
+    ;;
+  s)
+    SESSION=$OPTARG
+    ;;
+  h)
+    echo "foo"
+    show_help
+    ;;
+  \?)
+    echo "Invalid option: -$OPTARG" >&2
+    exit 1
+    ;;
+  :)
+    echo "Option -$OPTARG requires an argument." >&2
+    exit 1
+    ;;
+  esac
+done
+
+if [ "$SSH_AGENT" = true ]; then
+  if [ -n "$SSH_AUTH_SOCK" ]; then
+    ln -sf "${SSH_AUTH_SOCK}" "${HOME}/.ssh/.tmux-${SESSION}-ssh-auth.sock"
+  fi
+fi
+
+tmux -CC new-session -AD -s "${SESSION}"

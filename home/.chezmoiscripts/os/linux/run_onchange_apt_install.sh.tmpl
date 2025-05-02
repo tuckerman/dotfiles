@@ -1,0 +1,12 @@
+{{ template "bash/helper" . }}
+if_os linux || exit
+if_command apt || exit
+if_ephemeral && exit
+
+packages=$(
+cat <<EOF
+{{ include "../etc/apt/packages" }}
+EOF
+)
+
+echo $packages | xargs sudo apt install -y

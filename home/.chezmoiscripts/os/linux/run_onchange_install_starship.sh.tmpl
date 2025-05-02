@@ -1,0 +1,7 @@
+{{ template "bash/helper" . }}
+if_os linux || exit 0
+if_command starship && exit 0
+
+# Install starship to $HOME/bin
+mkdir -p $HOME/bin
+sudo curl -sS https://starship.rs/install.sh | sh -s -- --bin-dir $HOME/bin

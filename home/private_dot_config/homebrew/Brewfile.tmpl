@@ -1,0 +1,83 @@
+tap "homebrew/bundle"
+tap "homebrew/cask-fonts"
+tap "homebrew/cask-versions"
+tap "artginzburg/tap"  # sudo-touchid
+
+# Base
+brew "coreutils"
+brew "openssh"
+brew "starship"
+brew "tmux"
+brew "vim"
+brew "zsh"
+
+# dev
+brew "hugo"
+brew "pyenv"
+brew "rbenv"
+brew "rustup-init"
+brew "ruby-build"
+brew "python"
+brew "pyenv"
+brew "pipenv"
+brew "uv"
+brew "mise"
+
+# Utilities
+brew "cowsay"
+brew "ddcctl"
+brew "direnv"
+brew "fortune"
+brew "git"
+brew "gnupg"
+brew "grep"
+brew "imagemagick"
+brew "jq"
+brew "kubernetes-cli"
+brew "portaudio"
+brew "wget"
+brew "yq"
+brew "sudo-touchid"
+
+# Casks
+cask "1password"
+cask "1password-cli"
+cask "espanso"
+cask "firefox@developer-edition"
+cask "font-hack-nerd-font"
+cask "font-hasklug-nerd-font"
+cask "google-chrome"
+cask "google-chrome-canary"
+cask "hiddenbar"
+cask "iterm2"
+cask "karabiner-elements"
+cask "keyboardcleantool"
+cask "macfuse"
+cask "obsidian"
+cask "openlens"
+cask "rectangle"
+cask "scroll-reverser"
+cask "slack"
+cask "visual-studio-code"
+cask "vlc"
+cask "xbar"
+
+## Tailscale
+{{ if .enable_tailscale -}}
+cask "Tailscale"
+{{ else}}
+### TAILSCALE DISABLED
+{{ end }}
+
+## TeX
+{{ if .install_tex }}
+cask "mactex"
+cask "lyx"
+{{ else }}
+### TEX DISABLED
+{{ end }}
+
+# App Store
+brew "mas"
+mas "Amphetamine", id: 937984704
+mas "Testflight", id: 899247664
