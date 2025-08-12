@@ -7,3 +7,4 @@ shell-integration-features = true
 keybind = global:cmd+\=toggle_quick_terminal
 working-directory = home
 window-inherit-working-directory = false
+keybind = shift+enter=text:\n

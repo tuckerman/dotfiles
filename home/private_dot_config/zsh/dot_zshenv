@@ -18,7 +18,7 @@ export SCRATCH="$HOME/scratch"
 
 export SHELL_SESSIONS_DISABLE=1
 
-export PATH="${HOME}/bin:${HOME}/dev/bin:${HOME}/.cargo/bin:${HOME}/.local/bin):${PATH}"
+export PATH="${HOME}/bin:${HOME}/.local/bin:${HOME}/dev/bin:${HOME}/.cargo/bin:${HOME}/.local/bin):${PATH}"
 
 export CHEZMOI_SKIP_SCRIPTS=0
 export CHEZMOI_DEBUG=0
