@@ -1,26 +1,26 @@
-{{ if not eq .profile "personal" -}}
+{{ if ne .profile "personal" -}}
 .chezmoiscripts/profile/personal/**
 
 .ssh/config.d/personal
 .ssh/config.d/tailnet
 {{ end -}}
 
-{{ if not eq .chezmoi.os "darwin" -}}
+{{ if ne .chezmoi.os "darwin" -}}
 .chezmoiscripts/os/darwin/**
 
 .ssh/config.d/onepassword.darwin
 {{ end -}}
 
-{{ if not eq .chezmoi.os "linux" -}}
+{{ if ne .chezmoi.os "linux" -}}
 .chezmoiscripts/os/linux/**
 
 .ssh/config.d/onepassword.linux
 {{ end -}}
 
-{{ if not eq .chezmoi.osRelease.id "debian" -}}
+{{ if ne .chezmoi.osRelease.id "debian" -}}
 .chezmoiscripts/distro/debian/**
 {{ end -}}
 
-{{ if not eq .chezmoi.osRelease.id "fedora" -}}
+{{ if ne .chezmoi.osRelease.id "fedora" -}}
 .chezmoiscripts/distro/fedora/**
 {{ end -}}
