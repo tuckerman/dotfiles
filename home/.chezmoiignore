@@ -5,22 +5,22 @@
 .ssh/config.d/tailnet
 {{ end -}}
 
-{{ if ne .chezmoi.os "darwin" -}}
+{{ if not eq .chezmoi.os "darwin" -}}
 .chezmoiscripts/os/darwin/**
 
 .ssh/config.d/onepassword.darwin
 {{ end -}}
 
-{{ if ne .chezmoi.os "linux" -}}
+{{ if not eq .chezmoi.os "linux" -}}
 .chezmoiscripts/os/linux/**
 
 .ssh/config.d/onepassword.linux
 {{ end -}}
 
-{{ if ne .chezmoi.osRelease.id "debian" -}}
+{{ if not eq .chezmoi.osRelease.id "debian" -}}
 .chezmoiscripts/distro/debian/**
 {{ end -}}
 
-{{ if ne .chezmoi.osRelease.id "fedora" -}}
+{{ if not eq .chezmoi.osRelease.id "fedora" -}}
 .chezmoiscripts/distro/fedora/**
 {{ end -}}
