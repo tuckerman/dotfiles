@@ -1,7 +1,3 @@
-{{ template "bash/helper" . }}
-if_ephemeral && exit
-if_command brew || exit
-
 # Put the contents of the Brewfile here for change detection in chezmoi.
 echo <<EOF
 {{ include "./private_dot_config/homebrew/Brewfile.tmpl" }}

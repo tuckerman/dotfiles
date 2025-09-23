@@ -1,76 +1,38 @@
 # Copyright Cameron Tuckerman-Lee 2024. All rights reserved.
 
-# Autocompletion
-
-if [ -d /opt/homebrew/share/zsh/site-functions ]; then
-  FPATH="/opt/homebrew/share/zsh/site-functions:$FPATH"
-fi
-
-autoload -Uz compinit
-compinit
-
-autoload -U +X bashcompinit
-bashcompinit
-
-if command -v terraform &>/dev/null; then
-  if [ -f /opt/homebrew/bin/terraform ]; then
-    complete -o nospace -C /opt/homebrew/bin/terraform terraform
-  fi
-fi
-
-if [ -d /opt/homebrew/Caskroom/google-cloud-sdk ]; then
-  source /opt/homebrew/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.bash.inc
-fi
-
-if [ -f /opt/homebrew/etc/bash_completion.d/az ]; then
-  source /opt/homebrew/etc/bash_completion.d/az
-fi
-
-# vim
 bindkey -v
-export EDITOR=vim
 
+# Autocomplete
+autoload -Uz compinit
+compinit -i  # -i skips insecure-dir warnings
+autoload -Uz +X bashcompinit && bashcompinit
 
-# history
-setopt sharehistory
-setopt inc_append_history
-setopt extended_history
-setopt hist_find_no_dups
-export HISTFILE=${ZDOTDIR}/.zsh_history
-export HISTFILESIZE=1000000000
-export HISTSIZE=1000000000
-export SAVEHIST=10000000
-export HISTTIMEFORMAT="[%F %T] "
+# History
+HISTDIR=${XDG_STATE_HOME:-$HOME/.local/state}/zsh
+mkdir -p "$HISTDIR"
+HISTFILE="$HISTDIR/zsh_history"
+HISTSIZE=200000
+SAVEHIST=200000
 
-autoload -U history-search-end
+setopt SHARE_HISTORY  # merge history across sessions
+setopt INC_APPEND_HISTORY  # write to $HISTFILE immediately
+setopt EXTENDED_HISTORY  # timestamps + durations
+setopt HIST_IGNORE_DUPS  # drop consecutive dup
+setopt HIST_FIND_NO_DUPS  # skip dup matches when searching
+setopt HIST_EXPIRE_DUPS_FIRST  # expire dups first when trimming
+
+autoload -Uz history-search-end
 zle -N history-beginning-search-backward-end history-search-end
-zle -N history-beginning-search-forward-end history-search-end
-bindkey "^[[A" history-beginning-search-backward-end
-bindkey "^[OA" history-beginning-search-backward-end
-bindkey "^[[B" history-beginning-search-forward-end
-bindkey "^[OB" history-beginning-search-forward-end
+zle -N history-beginning-search-forward-end  history-search-end
 
-#autoload -U up-line-or-beginning-search
-#autoload -U down-line-or-beginning-search
-#zle -N up-line-or-beginning-search
-#zle -N down-line-or-beginning-search
-#bindkey "^[[A" up-line-or-beginning-search
-#bindkey "^[[B" down-line-or-beginning-search
+typeset -g -A key
+key[Up]="${terminfo[kcuu1]}"
+key[Down]="${terminfo[kcud1]}"
 
-# aliases
-alias ll='ls -lsah'
-alias blaze='bazel'
-alias code-wait='code --wait'
+[[ -n $key[Up]   ]] && bindkey "$key[Up]"   history-beginning-search-backward-end
+[[ -n $key[Down] ]] && bindkey "$key[Down]" history-beginning-search-forward-end
 
-if command -v wget &> /dev/null; then
-  alias wget='wget --no-hsts'
-fi
-
-# functions
-function re-source() {
-  source $ZDOTDIR/.zshrc
-}
-
+# rc.d
 for file in $HOME/.config/zsh/config.d/*; do
   source "$file"
 done

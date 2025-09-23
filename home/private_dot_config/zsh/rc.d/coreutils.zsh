@@ -1,4 +1,3 @@
-# Coreutils
 if command -v gls &> /dev/null; then
   alias ls='gls --hyperlink'
 fi

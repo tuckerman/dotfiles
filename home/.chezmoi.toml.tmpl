@@ -1,4 +1,5 @@
-{{- $profiles := list "personal" "misc" -}}
+{{- $profiles := list "personal" -}}
+{{- $default_shells}}
 
 {{- $zsh := "/usr/bin/zsh" -}}
 {{- if eq .chezmoi.os "darwin" -}}
@@ -6,21 +7,13 @@
 {{- end -}}
 
 {{- $profile := promptChoiceOnce . "profile" "Choose your profile" $profiles "personal" -}}
+{{- $default_shell := promptStringOnce . "default_shell" "Default shell" "/usr/bin/zsh" -}}
 {{- $email := promptStringOnce . "email" "Email address" "cameron@ctuck.com" -}}
-{{- $headless := promptBoolOnce . "headless" "Is this machine running in a headless environment" false -}}
-{{- $default_shell := promptStringOnce . "default_shell" "What is your default shell" $zsh -}}
-{{- $install_tex := promptBoolOnce . "install_tex" "Should we install TeX packages" false -}}
-{{- $enable_tailscale := promptBoolOnce . "enable_tailscale" "Should we enable tailscale" false -}}
-{{- $enable_onepassword_agent := promptBoolOnce . "enable_onepassword_agent" "Should we disable the onepassword agent" false -}}
 
 [data]
     email = {{ $email | quote }}
     profile = {{ $profile | quote }}
-    headless = {{ $headless }}
     default_shell = {{ $default_shell | quote }}
-    install_tex = {{ $install_tex }}
-    enable_tailscale = {{ $enable_tailscale }}
-    enable_onepassword_agent = {{ $enable_onepassword_agent }}
 
 [git]
     autoCommit = true
