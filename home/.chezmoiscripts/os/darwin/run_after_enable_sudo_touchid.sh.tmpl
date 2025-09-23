@@ -1,6 +1,0 @@
-{{ template "bash/helper" . }}
-if_os darwin || exit
-if_command sudo-touchid || exit
-if_ephemeral && exit
-
-sudo-touchid &> /dev/null

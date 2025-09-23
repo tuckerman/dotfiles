@@ -1,7 +1,3 @@
-{{ template "bash/helper" . }}
-if_os darwin || exit
-if_ephemeral && exit
-
 # Disable guest profile in Chrome.
 sudo defaults write com.google.Chrome BrowserGuestModeEnabled -bool false
 

@@ -1,10 +1,16 @@
 # Copyright Cameron Jay Tuckermam-Lee. All rights reserved.
 
-font-family = Hasklug Nerd Font Mono
 desktop-notifications = true
-shell-integration-features = true
+shell-integration-features = cursor,sudo,title
 
-keybind = global:cmd+\=toggle_quick_terminal
+keybind = global:super+backslash=toggle_quick_terminal
+quick-terminal-position = top
 working-directory = home
 window-inherit-working-directory = false
-keybind = shift+enter=text:\n
+keybind = shift+enter=text:\n(
+
+gtk-titlebar = true
+gtk-single-instance = detect
+window-decoration = auto
+background-opacity = 0.98
+window-theme = dark

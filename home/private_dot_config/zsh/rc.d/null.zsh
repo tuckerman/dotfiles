@@ -1,0 +1,1 @@
+[[ -z "$READNULLCMD" ]] || READNULLCMD=$PAGER

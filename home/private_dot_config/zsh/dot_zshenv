@@ -1,46 +1,16 @@
-export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}
-export XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
-export XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
-export XDG_STATE_HOME=${XDG_STATE_HOME:-$HOME/.local/state}
-export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-$HOME/.xdg}
-
 export ZDOTDIR="${XDG_CONFIG_HOME}/zsh"
+export SRC_DIR="$HOME/src"
+
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
 
 export EDITOR="vim"
 export VISUAL="vim"
 export PAGER="less"
 export LESS="-R"
-export LANG="en_US.UTF-8"
 
-export DEV="$HOME/dev"
-export GOPATH="$DEV"
-export SCRATCH="$HOME/scratch"
+export PATH="${HOME}/.local/bin:${SRC_DIR}/bin:${HOME}/.cargo/bin:${PATH}"
 
-export SHELL_SESSIONS_DISABLE=1
-
-export PATH="${HOME}/bin:${HOME}/.local/bin:${HOME}/dev/bin:${HOME}/.cargo/bin:${HOME}/.local/bin):${PATH}"
-
-export CHEZMOI_SKIP_SCRIPTS=0
-export CHEZMOI_DEBUG=0
-
-if [ -d "$HOME/.cargo" ]; then
-  if [ -f "$HOME/.cargo/env" ]; then
-    source "$HOME/.cargo/env"
-  fi
-fi
-
-if [ -S ~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock ]; then
-  export OP_SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
-fi
-
-if [ -d "/opt/homebrew/opt/openjdk" ]; then
-  export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
-  export CPPFLAGS="-I/opt/homebrew/opt/openjdk/include"
-fi
-
-if [ -d "$XDG_CACHE_HOME/.bun/bin" ]; then
-  export PATH="$XDG_CACHE_HOME/.bun/bin:$PATH"
-fi
-
-# uv
-export PATH="/Users/tuckerman/.local/share/../bin:$PATH"
+for file in ${ZDOTDIR}/env.d/*; do
+  source "$file"
+done
