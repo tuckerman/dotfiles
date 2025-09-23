@@ -33,7 +33,7 @@ key[Down]="${terminfo[kcud1]}"
 [[ -n $key[Down] ]] && bindkey "$key[Down]" history-beginning-search-forward-end
 
 # rc.d
-for file in $HOME/.config/zsh/config.d/*; do
+for file in $HOME/.config/zsh/rc.d/*; do
   source "$file"
 done
 
