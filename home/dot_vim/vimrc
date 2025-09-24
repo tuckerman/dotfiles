@@ -11,14 +11,6 @@ set wrap
 set autoindent
 set smartindent
 
-call plug#begin()
-Plug 'tpope/vim-sensible'
-Plug 'airblade/vim-gitgutter'
-Plug 'editorconfig/editorconfig-vim'
-Plug 'alker0/chezmoi.vim'
-Plug 'preservim/nerdtree'
-call plug#end()
-
 syntax on
 
 " Show hidden characters

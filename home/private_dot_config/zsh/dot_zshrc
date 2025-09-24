@@ -2,15 +2,36 @@
 
 bindkey -v
 
+# Start in insert mode.
+zle-line-init() { zle -K viins }
+zle -N zle-line-init
+
+# Compatibility shim for backspace.
+for map in viins; do
+  bindkey -M $map '^?'    backward-delete-char   # Backspace (DEL)
+  bindkey -M $map '^H'    backward-delete-char   # Backspace (BS)
+  bindkey -M $map '^[[3~' delete-char            # Delete
+  bindkey -M $map '^[^?'  backward-kill-word     # Alt+Backspace (optional)
+done
+
+# Allow backspace in vicmd mode.
+for map in vicmd; do
+  bindkey -M $map '^?' backward-delete-char
+  bindkey -M $map '^H' backward-delete-char
+  bindkey -M $map '^[[3~' delete-char
+done
+
 # Autocomplete
-autoload -Uz compinit
-compinit -i  # -i skips insecure-dir warnings
-autoload -Uz +X bashcompinit && bashcompinit
+autoload -Uz compinit bashcompinit
+compinit -i
+bashcompinit
+source $HOME/.local/share/bash-completion/completions/bazel-complete.bash
+complete -o default -F _bazel bazelisk
 
 # History
 HISTDIR=${XDG_STATE_HOME:-$HOME/.local/state}/zsh
 mkdir -p "$HISTDIR"
-HISTFILE="$HISTDIR/zsh_history"
+export HISTFILE="$HISTDIR/zsh_history"
 HISTSIZE=200000
 SAVEHIST=200000
 
@@ -20,17 +41,28 @@ setopt EXTENDED_HISTORY  # timestamps + durations
 setopt HIST_IGNORE_DUPS  # drop consecutive dup
 setopt HIST_FIND_NO_DUPS  # skip dup matches when searching
 setopt HIST_EXPIRE_DUPS_FIRST  # expire dups first when trimming
+setopt HIST_FCNTL_LOCK 2>/dev/null  # lock history file during writes
 
+# Up/Down arrows for history search.
 autoload -Uz history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end  history-search-end
 
-typeset -g -A key
-key[Up]="${terminfo[kcuu1]}"
-key[Down]="${terminfo[kcud1]}"
+autoload -Uz history-search-end
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end  history-search-end
+for map in viins vicmd; do
+  bindkey -M $map '^[[A'  history-beginning-search-backward-end  # CSI Up
+  bindkey -M $map '^[[B'  history-beginning-search-forward-end   # CSI Down
+  bindkey -M $map '^[OA'  history-beginning-search-backward-end  # SS3 Up
+  bindkey -M $map '^[OB'  history-beginning-search-forward-end   # SS3 Down
+done
 
-[[ -n $key[Up]   ]] && bindkey "$key[Up]"   history-beginning-search-backward-end
-[[ -n $key[Down] ]] && bindkey "$key[Down]" history-beginning-search-forward-end
+# ctrl-R/S for history search.
+bindkey -M viins '^R' history-incremental-search-backward
+bindkey -M viins '^S' history-incremental-search-forward
+bindkey -M vicmd '^R' history-incremental-search-backward
+bindkey -M vicmd '^S' history-incremental-search-forward
 
 # rc.d
 for file in $HOME/.config/zsh/rc.d/*; do
