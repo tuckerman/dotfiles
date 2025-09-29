@@ -5,6 +5,7 @@
 {{- $zsh = "/opt/homebrew/bin/zsh" -}}
 {{- end -}}
 
+{{- $steamhome := joinPath .chezmoi.homeDir ".local/share/steamhome" -}}
 {{- $profile := promptChoiceOnce . "profile" "Choose your profile" $profiles "personal" -}}
 {{- $default_shell := promptStringOnce . "default_shell" "Default shell" "/usr/bin/zsh" -}}
 {{- $email := promptStringOnce . "email" "Email address" "cameron@ctuck.com" -}}
@@ -13,6 +14,7 @@
     email = {{ $email | quote }}
     profile = {{ $profile | quote }}
     default_shell = {{ $default_shell | quote }}
+    steamhome = {{ $steamhome | quote }}
 
 [git]
     autoCommit = true
