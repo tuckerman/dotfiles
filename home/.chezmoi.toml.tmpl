@@ -5,6 +5,11 @@
 {{- $zsh = "/opt/homebrew/bin/zsh" -}}
 {{- end -}}
 
+{{- $osid := .chezmoi.os -}}
+{{- if hasKey .chezmoi.osRelease "id" -}}
+{{-   $osid = printf "%s-%s" .chezmoi.os .chezmoi.osRelease.id -}}
+{{- end -}}
+
 {{- $steamhome := joinPath .chezmoi.homeDir ".local/share/steamhome" -}}
 {{- $profile := promptChoiceOnce . "profile" "Choose your profile" $profiles "personal" -}}
 {{- $default_shell := promptStringOnce . "default_shell" "Default shell" "/usr/bin/zsh" -}}
@@ -15,3 +20,4 @@
     profile = {{ $profile | quote }}
     default_shell = {{ $default_shell | quote }}
     steamhome = {{ $steamhome | quote }}
+    osid = {{ $osid | quote }}

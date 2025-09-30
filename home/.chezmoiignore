@@ -18,9 +18,9 @@
 {{ end -}}
 
 {{ if ne .chezmoi.osRelease.id "debian" -}}
-.chezmoiscripts/distro/debian/**
+.chezmoiscripts/os/linux/debian/**
 {{ end -}}
 
 {{ if ne .chezmoi.osRelease.id "fedora" -}}
-.chezmoiscripts/distro/fedora/**
+.chezmoiscripts/os/linux/fedora/**
 {{ end -}}
