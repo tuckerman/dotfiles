@@ -7,14 +7,12 @@
 
 {{ if ne .chezmoi.os "darwin" -}}
 .chezmoiscripts/os/darwin/**
-
-.ssh/config.d/onepassword.darwin
 {{ end -}}
 
 {{ if ne .chezmoi.os "linux" -}}
 .chezmoiscripts/os/linux/**
 
-.ssh/config.d/onepassword.linux
+.local/share/applications/google-chrome.desktop
 {{ end -}}
 
 {{ if ne .chezmoi.osRelease.id "debian" -}}
