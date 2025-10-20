@@ -26,10 +26,3 @@ set smartcase     " Override ignorecase if search contains uppercase
 " Enable mouse support
 set mouse=a
 
-" Persistent undo and backups
-set undofile      " Keep undo history between sessions
-set backup        " Enable backups
-set backupdir=$XDG_DATA_HOME/vim/backup/
-set directory=$XDG_DATA_HOME/vim/swap/  " Swap files
-set undodir=$XDG_DATA_HOME/vim/undo/    " Undo files
-set viminfofile=$XDG_DATA_HOME/vim/viminfo

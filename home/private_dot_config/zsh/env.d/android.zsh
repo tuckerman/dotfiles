@@ -1,0 +1,1 @@
+export ANDROID_SDK_HOME="$XDG_DATA_HOME/android"
