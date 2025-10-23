@@ -1,0 +1,26 @@
+# Breeze Dark + Breeze Blue (for Ghostty)
+
+palette = 0=#232629
+palette = 1=#e78284
+palette = 2=#a6d189
+palette = 3=#e5c890
+palette = 4=#2390e0
+palette = 5=#b48ead
+palette = 6=#81c8be
+palette = 7=#a5adce
+palette = 8=#4f545a
+palette = 9=#e67172
+palette = 10=#8ec772
+palette = 11=#d9ba73
+palette = 12=#5ca8f5
+palette = 13=#c59ad5
+palette = 14=#6fd1c8
+palette = 15=#cfd3da
+
+background = #232629
+foreground = #fcfcfc
+cursor-color = #2390e0
+cursor-text = #232629
+selection-background = #3a3f44
+selection-foreground = #fcfcfc
+

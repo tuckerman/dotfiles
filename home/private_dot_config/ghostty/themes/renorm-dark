@@ -1,0 +1,28 @@
+# Renorm Labs Dark Theme — Ghostty
+
+background = #271B10
+foreground = #E8E4DC
+cursor-color = #FFD639
+cursor-text = #271B10
+selection-background = #4F463C
+selection-foreground = #E8E4DC
+
+palette = 0=#2A2520
+palette = 1=#4C91C0
+palette = 2=#C74C7C
+palette = 3=#D4AC00
+palette = 4=#FFD639
+palette = 5=#99917F
+palette = 6=#B6AFA2
+palette = 7=#E8E4DC
+palette = 8=#4F463C
+palette = 9=#64A3D6
+palette = 10=#E66A98
+palette = 11=#FFD639
+palette = 12=#FFB300
+palette = 13=#E6D7B9
+palette = 14=#99917F
+palette = 15=#FFFFFF
+
+bold-is-bright = true
+

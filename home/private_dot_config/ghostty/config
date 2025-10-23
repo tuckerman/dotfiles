@@ -12,5 +12,6 @@ keybind = shift+enter=text:\n(
 gtk-titlebar = true
 gtk-single-instance = detect
 window-decoration = auto
-background-opacity = 0.98
-window-theme = dark
+background-opacity = 1.0
+theme = renorm-dark
+window-decoration = server
