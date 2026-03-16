@@ -25,7 +25,7 @@ done
 autoload -Uz compinit bashcompinit
 compinit -i
 bashcompinit
-source $HOME/.local/share/bash-completion/completions/bazel-complete.bash
+[[ -f $HOME/.local/share/bash-completion/completions/bazel-complete.bash ]] && source $HOME/.local/share/bash-completion/completions/bazel-complete.bash
 complete -o default -F _bazel bazelisk
 
 # History
