@@ -10,3 +10,7 @@ rosen ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHScwL+lvdCiSHs7iNu6m3OivnPlVz5MVgZeaL
 rosen.bumblebee-lizard.ts.net ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHScwL+lvdCiSHs7iNu6m3OivnPlVz5MVgZeaLWwL/hO
 homeassistant ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJr0rVQlU9vmhific5eATqIdSzUo3v9LKIGeE0Sp1hZw
 homeassistant.bumblebee-lizard.ts.net ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJr0rVQlU9vmhific5eATqIdSzUo3v9LKIGeE0Sp1hZw
+
+# Otto
+otto ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEvqAQFQPf/3P3+2OYQ26tnohRT236DarMz7EK10rPxX
+otto.bumblebee-lizard.ts.net ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEvqAQFQPf/3P3+2OYQ26tnohRT236DarMz7EK10rPxX
