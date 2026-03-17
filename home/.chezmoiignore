@@ -5,6 +5,10 @@
 .ssh/config.d/tailnet
 {{ end -}}
 
+{{ if ne .profile "otto" -}}
+.chezmoiscripts/profile/otto/**
+{{ end -}}
+
 {{ if ne .chezmoi.os "darwin" -}}
 .chezmoiscripts/os/darwin/**
 {{ end -}}
