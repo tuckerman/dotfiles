@@ -1,12 +1,8 @@
 packages:
   linux:
     rocky:
-      rpms:
-        - package: google-chrome-stable
-          url: https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
-        - package: google-chrome-canary
-          url: https://dl.google.com/linux/direct/google-chrome-canary_current_x86_64.rpm
       repos:
+        repos: []
         setopt:
           - baseos.enabled=1
         addrepo:
