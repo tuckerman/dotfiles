@@ -23,7 +23,10 @@
 .chezmoiscripts/os/linux/fedora/**
 {{ end -}}
 
-
 {{ if ne .chezmoi.osRelease.variant "kde" -}}
 .chezmoiscripts/os/linux/kde/**
 {{ end -}}
+
+{{ if eq .chezmoi.os "windows" -}}
+.chezmoiscripts/**/*.sh
+{{- end }}
