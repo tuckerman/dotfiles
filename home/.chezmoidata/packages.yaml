@@ -29,7 +29,6 @@ packages:
               gpgkey=https://rpm.nodesource.com/gpgkey/ns-operations-public.key
               module_hotfixes=1
       dnf_packages:
-        - chezmoi
         - tailscale
         - google-cloud-cli
         - libxcrypt-compat.x86_64
