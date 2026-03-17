@@ -1,0 +1,55 @@
+<svg viewBox="-50 -50 1100 1100" width="100%" style="aspect-ratio:1" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <mask id="punch" maskUnits="userSpaceOnUse">
+      <rect x="-50" y="-50" width="1100" height="1100" fill="white"/>
+      <circle cx="500" cy="500" r="100" fill="black"/>
+      <rect x="0" y="475" width="1000" height="50" fill="black"/>
+    </mask>
+
+    <!-- Angled ~25°, smoother transitions, warmer top -->
+    <linearGradient id="depthFill" x1="0" y1="0" x2="0.47" y2="1">
+      <stop offset="0%"   stop-color="#FFE278"/>
+      <stop offset="25%"  stop-color="#FFC640"/>
+      <stop offset="55%"  stop-color="#FFB300"/>
+      <stop offset="80%"  stop-color="#E09B00"/>
+      <stop offset="100%" stop-color="#A86B00"/>
+    </linearGradient>
+
+    <!-- Subtle gloss: less bright, more diffuse -->
+    <linearGradient id="gloss" x1="0" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="white" stop-opacity="0.35"/>
+      <stop offset="25%" stop-color="white" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Gentle lifted shadow -->
+    <filter id="drop" x="-35%" y="-35%" width="170%" height="170%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="14" result="blur"/>
+      <feOffset in="blur" dx="8" dy="20" result="off"/>
+      <feColorMatrix in="off" type="matrix"
+        values="0 0 0 0 0
+                0 0 0 0 0
+                0 0 0 0 0
+                0 0 0 0.35 0" result="shadow"/>
+      <feMerge>
+        <feMergeNode in="shadow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Main reflective body -->
+  <g filter="url(#drop)">
+    <polygon
+      points="0,0 1000,0 850,500 1000,1000 0,1000 150,500"
+      fill="url(#depthFill)"
+      mask="url(#punch)"/>
+  </g>
+
+  <!-- Subtle sheen layer -->
+  <polygon
+    points="0,0 1000,0 850,500 1000,1000 0,1000 150,500"
+    fill="url(#gloss)"
+    mask="url(#punch)"/>
+</svg>
+

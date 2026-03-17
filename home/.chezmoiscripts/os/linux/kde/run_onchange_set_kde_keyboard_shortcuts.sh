@@ -21,6 +21,12 @@ kwriteconfig6 --file "$cfg" \
   --key "QuickAccess" \
   "Ctrl+Shift+Space"
 
+# Launch Google Chrome with Meta+Backspace.
+kwriteconfig6 --file kglobalshortcutsrc \
+  --group "services" --group "google-chrome.desktop" \
+  --key "new-window" \
+  "Meta+Backspace"
+
 # Ask KDE to reread config if possible.
 # If these fail harmlessly, log out/in or restart plasma/kglobalaccel.
 qdbus6 org.kde.KWin /KWin reconfigure >/dev/null 2>&1 || true
