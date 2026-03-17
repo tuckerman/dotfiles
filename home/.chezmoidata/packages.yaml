@@ -3,7 +3,6 @@ packages:
     rocky:
       repos:
         rpms: []
-        dnf_groups: []
         setopt: []
         addrepo:
           - path: /etc/yum.repos.d/tailscale.repo
@@ -34,6 +33,7 @@ packages:
         - tailscale
         - google-cloud-cli
         - libxcrypt-compat.x86_64
+      dnf_groups: []
     fedora:
       repos:
         setopt:
