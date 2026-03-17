@@ -21,6 +21,11 @@
 
 {{ if ne .chezmoi.osRelease.id "fedora" -}}
 .chezmoiscripts/os/linux/fedora/**
+.rpmmacros
+{{ end -}}
+
+{{ if ne .chezmoi.osRelease.id "rocky" -}}
+.chezmoiscripts/os/linux/rocky/**
 {{ end -}}
 
 {{ if ne .chezmoi.osRelease.variant "kde" -}}

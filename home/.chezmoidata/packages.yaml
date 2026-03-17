@@ -1,5 +1,36 @@
 packages:
   linux:
+    rocky:
+      repos:
+        addrepo:
+          - path: /etc/yum.repos.d/tailscale.repo
+            repofile: https://pkgs.tailscale.com/stable/fedora/tailscale.repo
+        files:
+          - path: /etc/yum.repos.d/google-cloud-sdk.repo
+            content: |
+              [google-cloud-cli]
+              name=Google Cloud CLI
+              baseurl=https://packages.cloud.google.com/yum/repos/cloud-sdk-el10-x86_64
+              enabled=1
+              gpgcheck=1
+              repo_gpgcheck=0
+              gpgkey=https://packages.cloud.google.com/yum/doc/rpm-package-key-v10.gpg
+          - path: /etc/yum.repos.d/nodesource-nodejs.repo
+            key_import: https://rpm.nodesource.com/gpgkey/ns-operations-public.key
+            content: |
+              [nodesource-nodejs]
+              name=Node.js Packages for Linux RPM based distros - x86_64
+              baseurl=https://rpm.nodesource.com/pub_24.x/nodistro/nodejs/x86_64
+              priority=9
+              enabled=1
+              gpgcheck=1
+              gpgkey=https://rpm.nodesource.com/gpgkey/ns-operations-public.key
+              module_hotfixes=1
+      dnf_packages:
+        - chezmoi
+        - tailscale
+        - google-cloud-cli
+        - libxcrypt-compat.x86_64
     fedora:
       repos:
         setopt:
@@ -68,6 +99,7 @@ packages:
         - git
         - keyd
         - koji
+        - libxcrypt-compat.x86_64
         - mise
         - mock
         - ninja-build
