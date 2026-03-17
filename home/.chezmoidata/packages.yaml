@@ -1,6 +1,7 @@
 packages:
   linux:
     rocky:
+      rpms: []
       repos:
         setopt:
           - baseos.enabled=1
