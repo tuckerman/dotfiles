@@ -22,3 +22,8 @@
 {{ if ne .chezmoi.osRelease.id "fedora" -}}
 .chezmoiscripts/os/linux/fedora/**
 {{ end -}}
+
+
+{{ if new .chezmoi.osRelease.variant "kde" -}}
+.chezmoiscripts/os/linux/kde/**
+{{ end -}}
