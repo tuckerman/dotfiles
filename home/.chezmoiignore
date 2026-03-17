@@ -28,7 +28,7 @@
 .chezmoiscripts/os/linux/rocky/**
 {{ end -}}
 
-{{ if ne .chezmoi.osRelease.variant "kde" -}}
+{{- if and (hasKey .chezmoi.osRelease "variant") (ne (index .chezmoi.osRelease "variant") "kde") -}}
 .chezmoiscripts/os/linux/kde/**
 {{ end -}}
 
