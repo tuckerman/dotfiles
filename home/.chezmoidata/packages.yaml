@@ -2,7 +2,7 @@ packages:
   linux:
     rocky:
       repos:
-        repos: []
+        rpms: []
         setopt:
           - baseos.enabled=1
         addrepo:
