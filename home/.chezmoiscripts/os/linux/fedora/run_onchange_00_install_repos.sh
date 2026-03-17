@@ -1,4 +1,5 @@
 #!/bin/bash
+# Version: 2026031701
 
 # RPM Fusion
 if ! rpm -q rpmfusion-free-release; then
