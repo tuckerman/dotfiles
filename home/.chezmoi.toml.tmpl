@@ -1,23 +1,30 @@
-{{- $profiles := list "personal" -}}
+{{- $profiles := list "personal" "renorm" "container" "otto" "tmp" -}}
 
-{{- $zsh := "/usr/bin/zsh" -}}
+{{- $default_shell_default := "/usr/bin/zsh" -}}
 {{- if eq .chezmoi.os "darwin" -}}
-{{- $zsh = "/opt/homebrew/bin/zsh" -}}
+{{- $default_shell_default = "/opt/homebrew/bin/zsh" -}}
 {{- end -}}
 
-{{- $osid := .chezmoi.os -}}
-{{- if hasKey .chezmoi.osRelease "id" -}}
-{{-   $osid = printf "%s-%s" .chezmoi.os .chezmoi.osRelease.id -}}
-{{- end -}}
+{{- $default_email := "cameron@ctuck.com" -}}
 
-{{- $steamhome := joinPath .chezmoi.homeDir ".local/share/steamhome" -}}
 {{- $profile := promptChoiceOnce . "profile" "Choose your profile" $profiles "personal" -}}
-{{- $default_shell := promptStringOnce . "default_shell" "Default shell" "/usr/bin/zsh" -}}
-{{- $email := promptStringOnce . "email" "Email address" "cameron@ctuck.com" -}}
+{{- $default_shell := promptStringOnce . "default_shell" "Default shell" $default_shell_default -}}
+{{- $email := promptStringOnce . "email" "Email address" $default_email -}}
+
+
+encryption = "age"
+
+[age]
+    identity = "{{ .chezmoi.homeDir }}/.age/key.txt"
+    recipient = "age1qdm4d8s4we8jywaq8y6nf4j92uny495tmmkcgzw209k08qgnxgqqdjaev8"
 
 [data]
     email = {{ $email | quote }}
     profile = {{ $profile | quote }}
     default_shell = {{ $default_shell | quote }}
-    steamhome = {{ $steamhome | quote }}
-    osid = {{ $osid | quote }}
+
+{{ if lookPath "podman" -}}
+[docker]
+    command = "podman"
+{{- end }}
+

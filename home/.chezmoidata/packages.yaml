@@ -1,0 +1,95 @@
+packages:
+  linux:
+    fedora:
+      repos:
+        setopt:
+          - fedora-cisco-openh264.enabled=1
+          - rpmfusion-free.enabled=1
+          - rpmfusion-free-updates.enabled=1
+          - rpmfusion-nonfree.enabled=1
+          - rpmfusion-nonfree-updates.enabled=1
+          - rpmfusion-nonfree-nvidia-driver.enabled=1
+          - rpmfusion-nonfree-steam.enabled=1
+
+        rpms:
+          - package: rpmfusion-free-release
+            url: https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+
+          - package: rpmfusion-nonfree-release
+            url: https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+
+          - package: google-chrome-stable
+            url: https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+
+          - package: google-chrome-canary
+            url: https://dl.google.com/linux/direct/google-chrome-canary_current_x86_64.rpm
+
+        addrepo:
+          - path: /etc/yum.repos.d/tailscale.repo
+            repofile: https://pkgs.tailscale.com/stable/fedora/tailscale.repo
+
+        files:
+          - path: /etc/yum.repos.d/1password.repo
+            key_import: https://downloads.1password.com/linux/keys/1password.asc
+            content: |
+              [1password]
+              name=1Password Stable Channel
+              baseurl=https://downloads.1password.com/linux/rpm/stable/$basearch
+              enabled=1
+              gpgcheck=1
+              repo_gpgcheck=1
+              gpgkey=https://downloads.1password.com/linux/keys/1password.asc
+
+          - path: /etc/yum.repos.d/google-cloud-sdk.repo
+            content: |
+              [google-cloud-cli]
+              name=Google Cloud CLI
+              baseurl=https://packages.cloud.google.com/yum/repos/cloud-sdk-el10-x86_64
+              enabled=1
+              gpgcheck=1
+              repo_gpgcheck=0
+              gpgkey=https://packages.cloud.google.com/yum/doc/rpm-package-key-v10.gpg
+      dnf_groups:
+        - development-tools
+      dnf_packages:
+        - 1password
+        - android-tools
+        - btrfs-assistant
+        - code
+        - ghostty
+        - google-chrome-canary
+        - google-chrome-stable
+        - google-cloud-cli
+        - mediawriter
+        - tailscale
+        - chezmoi
+        - fastfetch
+        - gcc-c++
+        - git
+        - keyd
+        - koji
+        - mise
+        - mock
+        - ninja-build
+        - nodejs
+        - podman-compose
+        - podman-docker
+        - podman-sequoia
+        - uv
+        - vim
+        - starship
+        - zsh
+      flatpak:
+        - com.discordapp.Discord
+        - com.github.marhkb.Pods
+        - com.github.wwmm.easyeffects
+        - com.slack.Slack
+        - io.github.kolunmi.Bazaar
+        - io.missioncenter.MissionCenter
+        - io.podman_desktop.PodmanDesktop
+        - it.mijorus.gearlever
+        - md.obsidian.Obsidian
+        - org.fkoehler.KTailctl
+        - org.mitmproxy.mitmproxy
+        - org.signal.Signal
+        - org.telegram.desktop

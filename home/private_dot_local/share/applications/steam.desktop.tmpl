@@ -27,7 +27,7 @@ Comment[th]=โปรแกรมสำหรับจัดการและ�
 Comment[tr]=Steam üzerinden oyun oynama ve düzenleme uygulaması
 Comment[uk]=Програма для керування іграми та запуску ігор у Steam
 Comment[vi]=Ứng dụng để quản lý và chơi trò chơi trên Steam
-Exec=env HOME={{.steamhome}} /usr/bin/steam %U
+Exec=env HOME={{.chezmoi.homeDir}}/.local/share/steamhome  /usr/bin/steam %U
 Icon=steam
 Terminal=false
 Type=Application
@@ -64,7 +64,7 @@ Name[th]=ร้านค้า
 Name[tr]=Mağaza
 Name[uk]=Крамниця
 Name[vi]=Cửa hàng
-Exec=env HOME={{.steamhome}} /usr/bin/steam steam://store
+Exec=env HOME={{.chezmoi.homeDir}}/.local/share/steamhome  /usr/bin/steam steam://store
 
 [Desktop Action Community]
 Name=Community
@@ -94,7 +94,7 @@ Name[th]=ชุมชน
 Name[tr]=Topluluk
 Name[uk]=Спільнота
 Name[vi]=Cộng đồng
-Exec=env HOME={{.steamhome}} /usr/bin/steam steam://url/CommunityHome/
+Exec=env HOME={{.chezmoi.homeDir}}/.local/share/steamhome  /usr/bin/steam steam://url/CommunityHome/
 
 [Desktop Action Library]
 Name=Library
@@ -124,7 +124,7 @@ Name[th]=คลัง
 Name[tr]=Kütüphane
 Name[uk]=Бібліотека
 Name[vi]=Thư viện
-Exec=env HOME={{.steamhome}} /usr/bin/steam steam://open/games
+Exec=env HOME={{.chezmoi.homeDir}}/.local/share/steamhome  /usr/bin/steam steam://open/games
 
 [Desktop Action Servers]
 Name=Servers
@@ -154,7 +154,7 @@ Name[th]=เซิร์ฟเวอร์
 Name[tr]=Sunucular
 Name[uk]=Сервери
 Name[vi]=Máy chủ
-Exec=env HOME={{.steamhome}} /usr/bin/steam steam://open/servers
+Exec=env HOME={{.chezmoi.homeDir}}/.local/share/steamhome  /usr/bin/steam steam://open/servers
 
 [Desktop Action Screenshots]
 Name=Screenshots
@@ -184,7 +184,7 @@ Name[th]=ภาพหน้าจอ
 Name[tr]=Ekran Görüntüleri
 Name[uk]=Скріншоти
 Name[vi]=Ảnh chụp
-Exec=env HOME={{.steamhome}} /usr/bin/steam steam://open/screenshots
+Exec=env HOME={{.chezmoi.homeDir}}/.local/share/steamhome  /usr/bin/steam steam://open/screenshots
 
 [Desktop Action News]
 Name=News
@@ -214,7 +214,7 @@ Name[th]=ข่าวสาร
 Name[tr]=Haberler
 Name[uk]=Новини
 Name[vi]=Tin tức
-Exec=env HOME={{.steamhome}} /usr/bin/steam steam://openurl/https://store.steampowered.com/news
+Exec=env HOME={{.chezmoi.homeDir}}/.local/share/steamhome  /usr/bin/steam steam://openurl/https://store.steampowered.com/news
 
 [Desktop Action Settings]
 Name=Settings
@@ -244,11 +244,11 @@ Name[th]=การตั้งค่า
 Name[tr]=Ayarlar
 Name[uk]=Налаштування
 Name[vi]=Thiết lập
-Exec=env HOME={{.steamhome}} /usr/bin/steam steam://open/settings
+Exec=env HOME={{.chezmoi.homeDir}}/.local/share/steamhome  /usr/bin/steam steam://open/settings
 
 [Desktop Action BigPicture]
 Name=Big Picture
-Exec=env HOME={{.steamhome}} /usr/bin/steam steam://open/bigpicture
+Exec=env HOME={{.chezmoi.homeDir}}/.local/share/steamhome  /usr/bin/steam steam://open/bigpicture
 
 [Desktop Action Friends]
 Name=Friends
@@ -278,4 +278,4 @@ Name[th]=เพื่อน
 Name[tr]=Arkadaşlar
 Name[uk]=Друзі
 Name[vi]=Bạn bè
-Exec=env HOME={{.steamhome}} /usr/bin/steam steam://open/friends
+Exec=env HOME={{.chezmoi.homeDir}}/.local/share/steamhome steam://open/friends

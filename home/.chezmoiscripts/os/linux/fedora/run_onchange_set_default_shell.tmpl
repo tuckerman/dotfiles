@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Set the default shell to .default_shell
+sudo usermod -s {{ .default_shell }} {{ .chezmoi.username }}

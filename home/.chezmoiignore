@@ -24,6 +24,6 @@
 {{ end -}}
 
 
-{{ if new .chezmoi.osRelease.variant "kde" -}}
+{{ if ne .chezmoi.osRelease.variant "kde" -}}
 .chezmoiscripts/os/linux/kde/**
 {{ end -}}

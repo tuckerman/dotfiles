@@ -1,8 +1,6 @@
 #!/bin/bash
 # Version 2026031701
 
-sudo dnf install -y keyd
-
 if [ ! -d /etc/keyd ]; then
   sudo mkdir -p /etc/keyd
   sudo chown root:keyd /etc/keyd
@@ -29,3 +27,5 @@ l = right
 rightshift = overload(shift, macro(S-9 S-0))
 EOM
 fi
+
+sudo systemctl restart keyd
