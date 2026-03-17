@@ -3,8 +3,8 @@ packages:
     rocky:
       repos:
         rpms: []
-        setopt:
-          - baseos.enabled=1
+        dnf_groups: []
+        setopt: []
         addrepo:
           - path: /etc/yum.repos.d/tailscale.repo
             repofile: https://pkgs.tailscale.com/stable/fedora/tailscale.repo
