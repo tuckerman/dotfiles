@@ -32,6 +32,8 @@ packages:
         - tailscale
         - google-cloud-cli
         - libxcrypt-compat.x86_64
+        - zsh
+        - vim
       dnf_groups: []
       flatpak: []
     fedora:
