@@ -39,3 +39,7 @@
 {{ if eq .chezmoi.os "windows" -}}
 .chezmoiscripts/**/*.sh
 {{- end }}
+
+{{- if ne .chezmoi.hostname "thanatos" }}
+.chezmoiscripts/host/thanatos/**
+{{ end -}}
