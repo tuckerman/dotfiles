@@ -22,6 +22,7 @@ encryption = "age"
     email = {{ $email | quote }}
     profile = {{ $profile | quote }}
     default_shell = {{ $default_shell | quote }}
+    enable_onepassword = true
 
 {{ if lookPath "podman" -}}
 [docker]
