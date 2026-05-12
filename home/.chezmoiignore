@@ -3,6 +3,12 @@
 
 .ssh/config.d/personal
 .ssh/config.d/tailnet
+.ssh/config.d/bookmarks
+{{ end -}}
+
+{{ if ne .profile "g" -}}
+.chezmoiscripts/profile/g/**
+.ssh/config.d/g
 {{ end -}}
 
 {{ if ne .profile "otto" -}}
@@ -16,7 +22,10 @@
 {{ if ne .chezmoi.os "linux" -}}
 .chezmoiscripts/os/linux/**
 
+{{ if eq .profile "g" -}}
 .local/share/applications/google-chrome.desktop
+{{ end -}}
+
 {{ end -}}
 
 {{ if ne .chezmoi.osRelease.id "debian" -}}
