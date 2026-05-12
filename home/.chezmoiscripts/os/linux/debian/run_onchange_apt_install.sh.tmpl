@@ -1,9 +1,9 @@
-exit 0
+# exit 0
+# 
+# packages=$(
+# cat <<EOF
+# {{ include "../etc/apt/packages" }}
+# EOF
+# )
 
-packages=$(
-cat <<EOF
-{{ include "../etc/apt/packages" }}
-EOF
-)
-
-echo $packages | xargs sudo apt install -y
+# echo $packages | xargs sudo apt install -y
