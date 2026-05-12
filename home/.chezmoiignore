@@ -8,6 +8,7 @@
 
 {{ if ne .profile "g" -}}
 .chezmoiscripts/profile/g/**
+
 .ssh/config.d/g
 {{ end -}}
 
