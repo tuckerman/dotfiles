@@ -11,7 +11,6 @@
 {{- $default_shell := promptStringOnce . "default_shell" "Default shell" $default_shell_default -}}
 {{- $email := promptStringOnce . "email" "Email address" $default_email -}}
 
-
 encryption = "age"
 
 [age]
@@ -22,7 +21,7 @@ encryption = "age"
     email = {{ $email | quote }}
     profile = {{ $profile | quote }}
     default_shell = {{ $default_shell | quote }}
-    enable_onepassword = true
+    enable_onepassword = false
 
 {{ if lookPath "podman" -}}
 [docker]
