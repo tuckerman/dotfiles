@@ -46,6 +46,12 @@ symbol = ""
 style = "red bold"
 format = "in [$symbol chezmoi]($style) "
 
+[env_var.SHPOOL_SESSION_NAME]
+variable = "SHPOOL_SESSION_NAME"
+symbol = "󰘆"
+style = "blue bold"
+format = "using [$symbol shpool:$env_value]($style)"
+
 
 # Nerd Font Stuff
 
