@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -u
+
+cat <<'EOF'
+debug-chezmoi
+
+Context reminder:
+- If `exit` returns you to Vim, the shell was probably spawned by Vim, for example via `:shell`.
+- A shell spawned while chezmoi is applying scripts can inherit CHEZMOI_* variables and start in the chezmoi working tree.
+- That can make the prompt look like `chezmoi cd`, even if `chezmoi update` did not directly run `chezmoi cd`.
+
+Snapshot:
+EOF
+
+printf 'pwd: '
+pwd
+
+printf '\nprocesses:\n'
+ps -o pid,ppid,stat,comm,args -p "$$,$PPID"
+
+printf '\nchezmoi environment:\n'
+printenv | sort | grep '^CHEZMOI' || true
+
+printf '\neditor environment:\n'
+printenv | sort | grep -E '^(EDITOR|VISUAL|GIT_EDITOR|SUDO_EDITOR|VIM|MYVIMRC|SHELL)=' || true
+
+printf '\nparent process chain:\n'
+pid=$$
+depth=0
+while [ "$pid" -gt 1 ] && [ "$depth" -lt 8 ]; do
+  ps -o pid,ppid,stat,comm,args -p "$pid" | sed '1d'
+  pid=$(ps -o ppid= -p "$pid" | tr -d ' ')
+  depth=$((depth + 1))
+done
+
+cat <<'EOF'
+
+Copy/paste prompt for a fresh Codex session:
+
+I ran `chezmoi update`. During script execution I was dropped into an interactive shell in the chezmoi repo with CHEZMOI_* environment variables set. When I ran `exit`, it returned me to Vim editing what looked like an empty temporary text file; after quitting Vim, chezmoi update resumed and completed successfully. Please diagnose what launched Vim and why Vim spawned a shell. Here is the debug output from `debug-chezmoi`:
+
+EOF

@@ -46,8 +46,23 @@ packages:
           - rpmfusion-nonfree-updates.enabled=1
           - rpmfusion-nonfree-nvidia-driver.enabled=1
           - rpmfusion-nonfree-steam.enabled=1
+          # Keep Terra available as a fallback, but never as the source of
+          # 1Password. The official 1Password repo remains unmodified.
+          - terra.priority=99
+          - terra-source.priority=99
+          - terra.excludepkgs=1password
+          - terra-source.excludepkgs=1password
 
         rpms:
+          # Terra's official bootstrap method installs its release package and
+          # signing keys from a temporary repo definition.
+          - package: terra-release
+            repofrompath: terra,https://repos.fyralabs.com/terra$releasever
+            packages:
+              - terra-release
+              - terra-gpg-keys
+            nogpgcheck: true
+
           - package: rpmfusion-free-release
             url: https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
 

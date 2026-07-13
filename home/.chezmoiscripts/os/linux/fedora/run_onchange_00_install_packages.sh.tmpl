@@ -1,19 +1,11 @@
 #!/usr/bin/env bash
-# Version: 2026031701
+# Version: 2026071201
 set -euo pipefail
-
-{{- if .packages.linux.fedora.repos.setopt }}
-sudo dnf config-manager setopt \
-{{- range .packages.linux.fedora.repos.setopt }}
-  {{ . | quote }} \
-{{- end }}
-;
-{{- end }}
 
 # install repo/bootstrap RPMs if their package is missing
 {{- range .packages.linux.fedora.repos.rpms }}
 if ! rpm -q {{ .package | quote }} >/dev/null 2>&1; then
-  sudo dnf install -y {{ .url }}
+  sudo dnf install -y{{ if get . "nogpgcheck" }} --nogpgcheck{{ end }}{{ with get . "repofrompath" }} --repofrompath {{ . | quote }}{{ end }}{{ with get . "packages" }}{{ range . }} {{ . | quote }}{{ end }}{{ else }} {{ .url }}{{ end }}
 fi
 {{- end }}
 
@@ -35,6 +27,15 @@ if [ ! -f {{ .path | quote }} ]; then
 {{ .content }}
 EOF
 fi
+{{- end }}
+
+# Apply preferences only after bootstrap and managed repository files exist.
+{{- if .packages.linux.fedora.repos.setopt }}
+sudo dnf config-manager setopt \
+{{- range .packages.linux.fedora.repos.setopt }}
+  {{ . | quote }} \
+{{- end }}
+;
 {{- end }}
 
 groups=(
