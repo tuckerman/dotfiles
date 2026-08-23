@@ -7,3 +7,5 @@ fi
 if command -v wget &> /dev/null; then
   alias wget='wget --no-hsts'
 fi
+
+alias mktempcd='cd "$(mktemp -d)"'
