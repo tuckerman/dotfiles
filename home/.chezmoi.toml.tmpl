@@ -22,6 +22,7 @@ encryption = "age"
     profile = {{ $profile | quote }}
     default_shell = {{ $default_shell | quote }}
     enable_onepassword = false
+    onepassword_ssh_socket = "~/.1password/agent.sock"
 
 {{ if lookPath "podman" -}}
 [docker]
