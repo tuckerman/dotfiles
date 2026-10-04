@@ -10,6 +10,7 @@
 {{- $profile := promptChoiceOnce . "profile" "Choose your profile" $profiles "personal" -}}
 {{- $default_shell := promptStringOnce . "default_shell" "Default shell" $default_shell_default -}}
 {{- $email := promptStringOnce . "email" "Email address" $default_email -}}
+{{- $enable_onepassword := promptBoolOnce . "enable onepassword?" true -}}
 
 encryption = "age"
 
@@ -21,7 +22,7 @@ encryption = "age"
     email = {{ $email | quote }}
     profile = {{ $profile | quote }}
     default_shell = {{ $default_shell | quote }}
-    enable_onepassword = false
+    enable_onepassword = {{ $enable_onepassword }}
     onepassword_ssh_socket = "~/.1password/agent.sock"
 
 {{ if lookPath "podman" -}}
