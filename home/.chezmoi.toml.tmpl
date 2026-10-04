@@ -10,7 +10,7 @@
 {{- $profile := promptChoiceOnce . "profile" "Choose your profile" $profiles "personal" -}}
 {{- $default_shell := promptStringOnce . "default_shell" "Default shell" $default_shell_default -}}
 {{- $email := promptStringOnce . "email" "Email address" $default_email -}}
-{{- $enable_onepassword := promptBoolOnce . "enable onepassword?" true -}}
+{{- $enable_onepassword := promptBoolOnce . "enable onepassword?" -}}
 
 encryption = "age"
 
