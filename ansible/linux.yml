@@ -1,0 +1,139 @@
+---
+- name: Configure the local RPM-based Linux host
+  hosts: localhost
+  connection: local
+  become: true
+  vars_files:
+    - ../home/.chezmoidata/packages.yaml
+  vars:
+    distro: "{{ ansible_facts.distribution | lower }}"
+    linux_packages: "{{ packages.linux[distro] }}"
+    gaming: false
+    nvidia: false
+  pre_tasks:
+    - name: Check supported platform and options
+      ansible.builtin.assert:
+        that:
+          - distro in ['fedora', 'rocky']
+          - not ((gaming | bool) or (nvidia | bool)) or (distro == 'fedora' and ansible_facts.architecture == 'x86_64')
+        fail_msg: Fedora and Rocky Linux are supported. Gaming and NVIDIA require Fedora x86_64.
+
+  tasks:
+    - name: Query installed repository bootstrap RPMs
+      ansible.builtin.command:
+        argv: [rpm, -q, "{{ item.package }}"]
+      loop: "{{ linux_packages.repos.rpms }}"
+      loop_control:
+        label: "{{ item.package }}"
+      register: bootstrap_rpms
+      changed_when: false
+      failed_when: bootstrap_rpms.rc not in [0, 1]
+      check_mode: false
+
+    - name: Install missing repository bootstrap RPMs
+      ansible.builtin.command:
+        expand_argument_vars: false
+        argv: >-
+          {{ ['dnf', 'install', '-y']
+             + (['--nogpgcheck'] if item.item.nogpgcheck | default(false) else [])
+             + (['--repofrompath', item.item.repofrompath] if item.item.repofrompath is defined else [])
+             + (item.item.packages if item.item.packages is defined else
+                [item.item.url | replace('$(rpm -E %fedora)', ansible_facts.distribution_major_version)]) }}
+      loop: "{{ bootstrap_rpms.results }}"
+      loop_control:
+        label: "{{ item.item.package }}"
+      when: item.rc == 1
+
+    - name: Fetch vendor repository definitions
+      ansible.builtin.get_url:
+        url: "{{ item.repofile }}"
+        dest: "{{ item.path }}"
+        owner: root
+        group: root
+        mode: '0644'
+      loop: "{{ linux_packages.repos.addrepo }}"
+      loop_control:
+        label: "{{ item.path }}"
+
+    - name: Import configured RPM signing keys
+      ansible.builtin.rpm_key:
+        key: "{{ item.key_import }}"
+        state: present
+      loop: "{{ linux_packages.repos.files | selectattr('key_import', 'defined') | list }}"
+      loop_control:
+        label: "{{ item.path }}"
+
+    - name: Write managed repository definitions
+      ansible.builtin.copy:
+        content: "{{ item.content }}"
+        dest: "{{ item.path }}"
+        owner: root
+        group: root
+        mode: '0644'
+      loop: "{{ linux_packages.repos.files }}"
+      loop_control:
+        label: "{{ item.path }}"
+
+    - name: Configure Fedora repository overrides
+      when: distro == 'fedora'
+      block:
+        - name: Create DNF5 repository override directory
+          ansible.builtin.file:
+            path: /etc/dnf/repos.override.d
+            state: directory
+            owner: root
+            group: root
+            mode: '0755'
+          register: dnf_override_dir
+
+        - name: Write repository preferences
+          ansible.builtin.template:
+            src: fedora-repos.override.j2
+            dest: /etc/dnf/repos.override.d/99-dotfiles.repo
+            owner: root
+            group: root
+            mode: '0644'
+          when: not ansible_check_mode or dnf_override_dir is not changed
+          vars:
+            repo_options: >-
+              {{ linux_packages.repos.setopt
+                 + ['rpmfusion-nonfree-nvidia-driver.enabled=' ~ (nvidia | bool | int),
+                    'rpmfusion-nonfree-steam.enabled=' ~ (gaming | bool | int)] }}
+
+    - name: Install package groups and packages
+      ansible.builtin.dnf:
+        name: >-
+          {{ (linux_packages.dnf_groups | map('regex_replace', '^', '@') | list)
+             + linux_packages.dnf_packages
+             + (['steam'] if gaming | bool else [])
+             + (['akmod-nvidia', 'xorg-x11-drv-nvidia-cuda'] if nvidia | bool else []) }}
+        state: present
+
+    - name: Configure Fedora keyboard remapping
+      when: distro == 'fedora'
+      block:
+        - name: Create keyd configuration directory
+          ansible.builtin.file:
+            path: /etc/keyd
+            state: directory
+            owner: root
+            group: keyd
+            mode: '0755'
+          register: keyd_dir
+
+        - name: Install keyd configuration
+          ansible.builtin.copy:
+            src: "{{ item }}"
+            dest: "/etc/keyd/{{ item | basename }}"
+            owner: root
+            group: root
+            mode: '0644'
+          with_fileglob: ../etc/keyd/*.conf
+          register: keyd_config
+          when: not ansible_check_mode or keyd_dir is not changed
+
+        - name: Enable and start keyd, restarting after configuration changes
+          ansible.builtin.systemd_service:
+            name: keyd
+            enabled: true
+            state: "{{ 'restarted' if keyd_config is changed else 'started' }}"

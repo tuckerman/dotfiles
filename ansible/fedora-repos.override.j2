@@ -1,0 +1,8 @@
+# Managed by the dotfiles Linux playbook.
+{% for repo, options in repo_options | map('split', '.', 1) | groupby('0') %}
+[{{ repo }}]
+{% for option in options %}
+{{ option[1] }}
+{% endfor %}
+
+{% endfor %}

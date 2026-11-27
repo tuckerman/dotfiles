@@ -6,7 +6,7 @@ packages:
         setopt: []
         addrepo:
           - path: /etc/yum.repos.d/tailscale.repo
-            repofile: https://pkgs.tailscale.com/stable/fedora/tailscale.repo
+            repofile: https://pkgs.tailscale.com/stable/rhel/10/tailscale.repo
         files:
           - path: /etc/yum.repos.d/google-cloud-sdk.repo
             content: |
@@ -44,8 +44,6 @@ packages:
           - rpmfusion-free-updates.enabled=1
           - rpmfusion-nonfree.enabled=1
           - rpmfusion-nonfree-updates.enabled=1
-          - rpmfusion-nonfree-nvidia-driver.enabled=1
-          - rpmfusion-nonfree-steam.enabled=1
           # Keep Terra available as a fallback, but never as the source of
           # 1Password. The official 1Password repo remains unmodified.
           - terra.priority=99

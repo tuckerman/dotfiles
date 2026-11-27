@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+{{- with .packages.linux.fedora.flatpak }}
+flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak install --user --noninteractive flathub \
+{{- range . }}
+  {{ . | quote }} \
+{{- end }}
+;
+{{- end }}
