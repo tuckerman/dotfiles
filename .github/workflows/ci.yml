@@ -9,13 +9,44 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  linux:
+    name: Test (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: fedora
+            image: fedora:latest
+            packages: git python3 openssh-clients tar ShellCheck
+          - name: rocky-10
+            image: rockylinux/rockylinux:10
+            packages: git python3 openssh-clients tar
+    container:
+      image: ${{ matrix.image }}
+
+    steps:
+      - name: Install dependencies
+        run: |
+          dnf install -y ${{ matrix.packages }}
+          sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run chezmoi test suite
+        run: |
+          chezmoi --version
+          python3 --version
+          python3 tests/test_chezmoi.py
+
+  desktop:
     name: Test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [macos-latest, windows-latest]
 
     steps:
       - name: Checkout repository
@@ -26,23 +57,12 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install chezmoi (Unix)
-        if: runner.os != 'Windows'
+      - name: Install chezmoi (macOS)
+        if: runner.os == 'macOS'
         shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
-          set -euo pipefail
-          os="$(uname -s | tr '[:upper:]' '[:lower:]')"
-          arch="$(uname -m)"
-          case "$arch" in
-            x86_64) arch="amd64" ;;
-            arm64|aarch64) arch="arm64" ;;
-          esac
-          mkdir -p "$HOME/.local/bin" /tmp/chezmoi-dl
-          gh release download --repo twpayne/chezmoi --pattern "*_${os}_${arch}.tar.gz" -D /tmp/chezmoi-dl
-          tar -xzf /tmp/chezmoi-dl/*_"${os}_${arch}".tar.gz -C /tmp/chezmoi-dl chezmoi
-          install -m 755 /tmp/chezmoi-dl/chezmoi "$HOME/.local/bin/chezmoi"
+          mkdir -p "$HOME/.local/bin"
+          sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Install chezmoi (Windows)
@@ -60,10 +80,8 @@ jobs:
           Expand-Archive -Path $zip.FullName -DestinationPath $binDir -Force
           $binDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-      - name: Verify tools
+      - name: Run chezmoi test suite
         run: |
           chezmoi --version
           python --version
-
-      - name: Run chezmoi test suite
-        run: python tests/test_chezmoi.py
+          python tests/test_chezmoi.py

@@ -19,11 +19,7 @@ import tomllib
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-CURRENT_OS = {
-    "Linux": "linux",
-    "Darwin": "darwin",
-    "Windows": "windows",
-}[platform.system()]
+CURRENT_OS = platform.system().lower()
 
 
 def run(cmd: list[str], *, env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
@@ -178,8 +174,8 @@ def test_native_profiles() -> None:
 
 
 def test_script_matrix() -> None:
-    """On Linux, render and lint scripts across all target OS/distro/profile combinations."""
-    if CURRENT_OS != "linux":
+    """On Linux with shellcheck, render and lint scripts across all OS/distro combinations."""
+    if CURRENT_OS != "linux" or not shutil.which("shellcheck"):
         return
 
     matrix = [
