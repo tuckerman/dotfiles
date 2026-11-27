@@ -2,20 +2,32 @@
 
 {{- $default_shell_default := "/usr/bin/zsh" -}}
 {{- if eq .chezmoi.os "darwin" -}}
-{{- $default_shell_default = "/opt/homebrew/bin/zsh" -}}
+{{-   $default_shell_default = "/bin/zsh" -}}
+{{- else if eq .chezmoi.os "windows" -}}
+{{-   $default_shell_default = "pwsh" -}}
 {{- end -}}
 
 {{- $default_email := "cameron@ctuck.com" -}}
 
 {{- $profile := promptChoiceOnce . "profile" "Choose your profile" $profiles "personal" -}}
-{{- $default_shell := promptStringOnce . "default_shell" "Default shell" $default_shell_default -}}
+{{- $default_shell := $default_shell_default -}}
+{{- if ne .chezmoi.os "windows" -}}
+{{-   $default_shell = promptStringOnce . "default_shell" "Default shell" $default_shell_default -}}
+{{- end -}}
 {{- $email := promptStringOnce . "email" "Email address" $default_email -}}
-{{- $enable_onepassword := promptBoolOnce . "enable_onepassword" "enable onepassword?" -}}
+{{- $enable_onepassword := promptBoolOnce . "enable_onepassword" "Enable 1Password" false -}}
+
+{{- $onepassword_ssh_socket := "" -}}
+{{- if eq .chezmoi.os "linux" -}}
+{{-   $onepassword_ssh_socket = "~/.1password/agent.sock" -}}
+{{- else if eq .chezmoi.os "darwin" -}}
+{{-   $onepassword_ssh_socket = "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" -}}
+{{- end -}}
 
 encryption = "age"
 
 [age]
-    identity = "{{ .chezmoi.homeDir }}/.age/key.txt"
+    identity = {{ joinPath .chezmoi.homeDir ".age" "key.txt" | quote }}
     recipient = "age1qdm4d8s4we8jywaq8y6nf4j92uny495tmmkcgzw209k08qgnxgqqdjaev8"
 
 [data]
@@ -23,10 +35,15 @@ encryption = "age"
     profile = {{ $profile | quote }}
     default_shell = {{ $default_shell | quote }}
     enable_onepassword = {{ $enable_onepassword }}
-    onepassword_ssh_socket = "~/.1password/agent.sock"
+    onepassword_ssh_socket = {{ $onepassword_ssh_socket | quote }}
+{{- if lookPath "podman" }}
 
-{{ if lookPath "podman" -}}
 [docker]
     command = "podman"
 {{- end }}
+{{- if and (eq .chezmoi.os "windows") (lookPath "pwsh") }}
 
+[cd]
+    command = "pwsh"
+    args = ["-NoLogo"]
+{{- end }}

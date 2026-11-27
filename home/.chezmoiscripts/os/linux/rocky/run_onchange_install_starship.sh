@@ -1,2 +1,6 @@
-#!/bin/bash
-curl -sS https://starship.rs/install.sh | sh
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v starship >/dev/null 2>&1; then
+  curl -fsSL https://starship.rs/install.sh | sh -s -- -y
+fi

@@ -27,6 +27,7 @@ show_always = true
 format = "[$user]($style)@"
 
 [custom.ssh]
+os = "unix"
 command = """ echo "${SSH_CLIENT}" | awk -F' ' '{print $1}' """
 when = """ test ! -z "${SSH_CLIENT}" """
 # format = "via [🐡 $output]($style) "
@@ -34,6 +35,7 @@ when = """ test ! -z "${SSH_CLIENT}" """
 format = "via [ $output]($style) "
 
 [custom.direnv]
+os = "unix"
 command = """ echo "${DIRENV_FILE}" | awk -F'/' '{print $(NF-1)"/"$(NF)}' """
 when = """ test ! -z "${DIRENV_FILE}" """
 # format = "with [📂 $output]($style) "
@@ -65,6 +67,7 @@ Linux = " "
 Macos = " "
 OpenBSD = "󰈺 "
 Ubuntu = " "
+Windows = "󰍲 "
 
 [c]
 symbol = " "

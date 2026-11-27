@@ -4,14 +4,17 @@
 [push]
   default = current
 [http]
-  cookiefile = {{ .chezmoi.homeDir }}/.local/share/git/cookies
+  cookiefile = ~/.local/share/git/cookies
 [filter "lfs"]
   clean = git-lfs clean -- %f
   smudge = git-lfs smudge -- %f
   process = git-lfs filter-process
   required = true
 [core]
-  excludesfile = {{ .chezmoi.homeDir }}/.config/git/gitignore
+  excludesfile = ~/.config/git/gitignore
+{{- if and (eq .chezmoi.os "windows") .enable_onepassword }}
+  sshCommand = C:/Windows/System32/OpenSSH/ssh.exe
+{{- end }}
 [pager]
   branch = false
 [fedpkg]

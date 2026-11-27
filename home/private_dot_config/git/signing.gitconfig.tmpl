@@ -1,0 +1,17 @@
+{{- $program := "/opt/1Password/op-ssh-sign" -}}
+{{- if eq .chezmoi.os "darwin" -}}
+{{-   $program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign" -}}
+{{- else if eq .chezmoi.os "windows" -}}
+{{-   $program = printf "%s/AppData/Local/1Password/app/8/op-ssh-sign.exe" (.chezmoi.homeDir | replace "\\" "/") -}}
+{{- end -}}
+[user]
+  signingkey = {{ include "private_dot_ssh/id_ed25519_1password.pub" | trim }}
+
+[gpg]
+  format = ssh
+
+[gpg "ssh"]
+  program = {{ $program | quote }}
+
+[commit]
+  gpgsign = true

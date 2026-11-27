@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    name: Test (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: fedora
+            image: fedora:latest
+            packages: git python3 openssh-clients tar ShellCheck
+          - name: rocky-10
+            image: rockylinux/rockylinux:10
+            packages: git python3 openssh-clients tar
+    container:
+      image: ${{ matrix.image }}
+
+    steps:
+      - name: Install dependencies
+        run: |
+          dnf install -y ${{ matrix.packages }}
+          sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run chezmoi test suite
+        run: |
+          chezmoi --version
+          python3 --version
+          python3 tests/test_chezmoi.py
+
+  desktop:
+    name: Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install chezmoi (macOS)
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Install chezmoi (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $dlDir = Join-Path $env:RUNNER_TEMP 'chezmoi-dl'
+          $binDir = Join-Path $env:RUNNER_TEMP 'chezmoi-bin'
+          New-Item -ItemType Directory -Force -Path $dlDir, $binDir | Out-Null
+          gh release download --repo twpayne/chezmoi --pattern '*_windows_amd64.zip' -D $dlDir
+          $zip = Get-ChildItem -Path $dlDir -Filter '*_windows_amd64.zip' | Select-Object -First 1
+          Expand-Archive -Path $zip.FullName -DestinationPath $binDir -Force
+          $binDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Run chezmoi test suite
+        run: |
+          chezmoi --version
+          python --version
+          python tests/test_chezmoi.py

@@ -1,0 +1,14 @@
+{{- $nullFile := "/dev/null" -}}
+{{- if eq .chezmoi.os "windows" -}}
+{{-   $nullFile = "NUL" -}}
+{{- end -}}
+Host 10.*
+  StrictHostKeyChecking no
+  UserKnownHostsFile={{ $nullFile }}
+
+Host 192.168.*
+  StrictHostKeyChecking no
+  UserKnownHostsFile={{ $nullFile }}
+
+Host 10.59.0.1
+  User unifi

@@ -1,6 +1,5 @@
 {{ if ne .profile "personal" -}}
 .chezmoiscripts/profile/personal/**
-
 .ssh/config.d/personal
 .ssh/config.d/tailnet
 .ssh/config.d/bookmarks
@@ -8,7 +7,6 @@
 
 {{ if ne .profile "g" -}}
 .chezmoiscripts/profile/g/**
-
 .ssh/config.d/g
 {{ end -}}
 
@@ -18,45 +16,67 @@
 
 {{ if ne .chezmoi.os "darwin" -}}
 .chezmoiscripts/os/darwin/**
+.config/karabiner/**
 {{ end -}}
 
 {{ if ne .chezmoi.os "linux" -}}
 .chezmoiscripts/os/linux/**
-
+.local/share/applications/**
+.local/share/steamhome
+.config/pipewire/**
+.config/user-dirs.dirs
+.rpmmacros
+{{ else -}}
 {{ if eq .profile "g" -}}
 .local/share/applications/google-chrome.desktop
 {{ end -}}
 
-{{ end -}}
+{{- $osID := get .chezmoi.osRelease "id" | default "" -}}
+{{- $osVariantID := get .chezmoi.osRelease "variantID" | default "" -}}
 
-{{ if ne .chezmoi.osRelease.id "debian" -}}
+{{ if ne $osID "debian" -}}
 .chezmoiscripts/os/linux/debian/**
 {{ end -}}
 
-{{ if ne .chezmoi.osRelease.id "fedora" -}}
+{{ if ne $osID "fedora" -}}
 .chezmoiscripts/os/linux/fedora/**
 .rpmmacros
 {{ end -}}
 
-{{ if ne .chezmoi.osRelease.id "rocky" -}}
+{{ if ne $osID "rocky" -}}
 .chezmoiscripts/os/linux/rocky/**
 {{ end -}}
 
-{{- if or (not (hasKey .chezmoi.osRelease "variant")) (ne (index .chezmoi.osRelease "variant") "kde") -}}
+{{ if ne $osVariantID "kde" -}}
 .chezmoiscripts/os/linux/kde/**
 {{ end -}}
+{{ end -}}
 
-{{ if eq .chezmoi.os "windows" -}}
+{{ if ne .chezmoi.os "windows" -}}
+.chezmoiscripts/os/windows/**
+Documents/PowerShell/**
+AppData/**
+{{ else -}}
 .chezmoiscripts/**/*.sh
-{{- end }}
+.zshenv
+.hushlogin
+.config/zsh/**
+.config/tmux/**
+.config/shpool/**
+.config/ghostty/**
+.config/1Password/**
+.local/bin/**
+.ssh/config.d/onepassword
+{{ end -}}
 
-{{- if ne .chezmoi.hostname "thanatos" }}
+{{ if ne .chezmoi.hostname "thanatos" -}}
 .chezmoiscripts/host/thanatos/**
 {{ end -}}
 
 {{ if not .enable_onepassword -}}
 .ssh/config.d/onepassword
 .config/1Password/**
+AppData/Local/1Password/**
 .config/zsh/env.d/onepassword.zsh
 .config/git/signing.gitconfig
-{{- end }}
+{{ end -}}

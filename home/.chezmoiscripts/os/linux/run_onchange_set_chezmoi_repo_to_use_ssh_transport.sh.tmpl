@@ -1,5 +1,4 @@
-#!/bin/bash
-# Version: 2026031701
+#!/usr/bin/env bash
+set -euo pipefail
 
-cd ~/.local/share/chezmoi
-git -C {{ .chezmoi.workingTree }} remote set-url origin git@github.com:tuckerman/dotfiles.git
+git -C {{ .chezmoi.workingTree | quote }} remote set-url origin git@github.com:tuckerman/dotfiles.git
