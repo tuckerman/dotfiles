@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+target_shell={{ .default_shell | quote }}
+current_shell=$(getent passwd {{ .chezmoi.username | quote }} | cut -d: -f7)
+
+if [ "$current_shell" = "$target_shell" ]; then
+  exit 0
+fi
+
+if [ ! -x "$target_shell" ]; then
+  echo "Default shell $target_shell does not exist; skipping." >&2
+  exit 0
+fi
+
+if ! grep -Fxq "$target_shell" /etc/shells 2>/dev/null; then
+  echo "Default shell $target_shell is not listed in /etc/shells; skipping." >&2
+  exit 0
+fi
+
+sudo usermod -s "$target_shell" {{ .chezmoi.username | quote }}

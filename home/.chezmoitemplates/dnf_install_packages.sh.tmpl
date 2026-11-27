@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+{{- if .repos.rpms }}
+
+# Install repo/bootstrap RPMs if their package is missing.
+{{- range .repos.rpms }}
+if ! rpm -q {{ .package | quote }} >/dev/null 2>&1; then
+  sudo dnf install -y{{ if get . "nogpgcheck" }} --nogpgcheck{{ end }}{{ with get . "repofrompath" }} --repofrompath {{ . | squote }}{{ end }}{{ with get . "packages" }}{{ range . }} {{ . | quote }}{{ end }}{{ else }} "{{ .url }}"{{ end }}
+fi
+{{- end }}
+{{- end }}
+{{- if .repos.addrepo }}
+
+# Add repos from repofiles if the target .repo file is absent.
+{{- range .repos.addrepo }}
+if [ ! -f {{ .path | quote }} ]; then
+  sudo dnf config-manager addrepo --from-repofile={{ .repofile | quote }}
+fi
+{{- end }}
+{{- end }}
+{{- if .repos.files }}
+
+# Write or update managed .repo files.
+{{- range .repos.files }}
+repo_content=$(cat <<'EOF'
+{{ .content | trimSuffix "\n" }}
+EOF
+)
+if [ ! -f {{ .path | quote }} ] || ! printf '%s\n' "$repo_content" | cmp -s - {{ .path | quote }}; then
+{{- $keyImport := get . "key_import" }}
+{{- if $keyImport }}
+  sudo rpm --import {{ $keyImport | quote }}
+{{- end }}
+  printf '%s\n' "$repo_content" | sudo tee {{ .path | quote }} >/dev/null
+fi
+{{- end }}
+{{- end }}
+{{- if .repos.setopt }}
+
+# Apply preferences only after bootstrap and managed repository files exist.
+setopts=(
+{{- range .repos.setopt }}
+  {{ . | quote }}
+{{- end }}
+)
+sudo dnf config-manager setopt "${setopts[@]}"
+{{- end }}
+{{- if .dnf_groups }}
+
+groups=(
+{{- range .dnf_groups }}
+  {{ . | quote }}
+{{- end }}
+)
+sudo dnf group install -y "${groups[@]}"
+{{- end }}
+{{- if .dnf_packages }}
+
+packages=(
+{{- range .dnf_packages }}
+  {{ . | quote }}
+{{- end }}
+)
+sudo dnf install -y "${packages[@]}"
+{{- end }}
+{{- if .flatpak }}
+
+apps=(
+{{- range .flatpak }}
+  {{ . | quote }}
+{{- end }}
+)
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak install -y flathub "${apps[@]}"
+{{- end }}

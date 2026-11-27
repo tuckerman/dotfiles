@@ -1,3 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-npm install -g obsidian-headless
+if command -v npm >/dev/null 2>&1; then
+  npm install -g obsidian-headless
+fi

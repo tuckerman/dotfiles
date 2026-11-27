@@ -22,7 +22,7 @@ kwriteconfig6 --file "$cfg" \
   "Ctrl+Shift+Space"
 
 # Launch Google Chrome with Meta+Backspace.
-kwriteconfig6 --file kglobalshortcutsrc \
+kwriteconfig6 --file "$cfg" \
   --group "services" --group "google-chrome.desktop" \
   --key "new-window" \
   "Meta+Backspace"

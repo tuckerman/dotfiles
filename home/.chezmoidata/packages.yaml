@@ -6,7 +6,7 @@ packages:
         setopt: []
         addrepo:
           - path: /etc/yum.repos.d/tailscale.repo
-            repofile: https://pkgs.tailscale.com/stable/fedora/tailscale.repo
+            repofile: https://pkgs.tailscale.com/stable/rhel/10/tailscale.repo
         files:
           - path: /etc/yum.repos.d/google-cloud-sdk.repo
             content: |
@@ -145,3 +145,17 @@ packages:
         - org.mitmproxy.mitmproxy
         - org.signal.Signal
         - org.telegram.desktop
+  windows:
+    winget:
+      - AgileBits.1Password
+      - AgileBits.1Password.CLI
+      - Git.Git
+      - Microsoft.PowerShell
+      - Microsoft.VisualStudioCode
+      - Obsidian.Obsidian
+      - Starship.Starship
+      - Tailscale.Tailscale
+      - astral-sh.uv
+      - jdx.mise
+      - twpayne.chezmoi
+      - vim.vim
