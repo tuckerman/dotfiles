@@ -22,6 +22,10 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 CURRENT_OS = platform.system().lower()
 
 
+def log(msg: str) -> None:
+    print(msg, flush=True)
+
+
 def run(cmd: list[str], *, env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
     result = subprocess.run(cmd, env=env, text=True, capture_output=True)
     if result.returncode != 0:
@@ -75,12 +79,17 @@ def init_chezmoi(dest: Path, cfg: Path, state: Path, *, profile: str, enable_one
     )
     assert cfg.is_file(), f"chezmoi init did not create {cfg}"
     parsed = tomllib.loads(cfg.read_text(encoding="utf-8"))
-    assert parsed["data"]["profile"] == profile
-    assert parsed["data"]["email"] == "test@example.com"
-    assert parsed["data"]["enable_onepassword"] is enable_onepassword
-    assert parsed["data"]["default_shell"]
+    data = parsed["data"]
+    assert data["profile"] == profile
+    assert data["email"] == "test@example.com"
+    assert data["enable_onepassword"] is enable_onepassword
+    assert data["default_shell"]
     assert parsed["age"]["identity"]
     assert parsed["age"]["recipient"]
+    log(
+        f"  init: OK (profile={data['profile']}, default_shell={data['default_shell']}, "
+        f"enable_onepassword={data['enable_onepassword']})"
+    )
     return parsed
 
 
@@ -101,42 +110,70 @@ def validate_applied_files(dest: Path, *, profile: str, enable_onepassword: bool
     home_env = {**os.environ, "HOME": str(dest)}
 
     # Core cross-platform files that should always exist.
-    for rel in [
+    core_files = [
         ".config/git/config",
         ".ssh/config",
         ".vim/vimrc",
         ".editorconfig",
         ".config/starship.toml",
-    ]:
+    ]
+    for rel in core_files:
         assert (dest / rel).is_file(), f"Missing expected core file: {rel}"
 
     # OS-specific bedrock shell entrypoints.
     if CURRENT_OS == "windows":
-        assert (dest / "Documents/PowerShell/Microsoft.PowerShell_profile.ps1").is_file()
+        ps_profile = "Documents/PowerShell/Microsoft.PowerShell_profile.ps1"
+        assert (dest / ps_profile).is_file(), f"Missing {ps_profile}"
         assert not (dest / ".zshenv").exists(), "Unix symlink .zshenv should not exist on Windows"
+        core_files.append(ps_profile)
+        log(f"  core files: OK ({', '.join(core_files)}; .zshenv absent)")
     else:
         zshenv = dest / ".zshenv"
         assert zshenv.is_symlink() and zshenv.is_file(), ".zshenv should be a valid symlink"
         assert (dest / ".config/zsh/.zshrc").is_file()
+        core_files.extend([".zshenv (symlink)", ".config/zsh/.zshrc"])
+        log(f"  core files: OK ({', '.join(core_files)})")
 
     # Conditional-ignore canaries (one per toggle).
-    assert (dest / ".config/git/signing.gitconfig").is_file() is enable_onepassword
-    assert (dest / ".ssh/config.d/personal").is_file() is (profile == "personal")
+    signing_present = (dest / ".config/git/signing.gitconfig").is_file()
+    personal_ssh_present = (dest / ".ssh/config.d/personal").is_file()
+    assert signing_present is enable_onepassword
+    assert personal_ssh_present is (profile == "personal")
+    log(
+        f"  toggles: OK (signing.gitconfig={'present' if signing_present else 'ignored'}, "
+        f"ssh/personal={'present' if personal_ssh_present else 'ignored'})"
+    )
 
     # Generic syntax checks for all applied config files by type.
+    checked = {"toml": [], "json": [], "ps1": []}
     for path in sorted(dest.rglob("*")):
         if not path.is_file():
             continue
+        rel = path.relative_to(dest).as_posix()
         if path.suffix == ".toml":
             tomllib.loads(path.read_text(encoding="utf-8"))
+            checked["toml"].append(rel)
         elif path.suffix == ".json":
             json.loads(path.read_text(encoding="utf-8"))
+            checked["json"].append(rel)
         elif path.suffix == ".ps1":
             parse_powershell(path)
+            checked["ps1"].append(rel)
+
+    syntax_summary = [
+        f"{len(checked['toml'])} TOML",
+        f"{len(checked['json'])} JSON",
+        f"{len(checked['ps1'])} PS1",
+    ]
 
     run(["git", "config", "--list", "--includes", "--file", str(dest / ".config/git/config")], env=home_env)
+    syntax_summary.append("git config")
+
     if CURRENT_OS != "windows" and shutil.which("ssh"):
         run(["ssh", "-G", "-F", str(dest / ".ssh/config"), "github.com"], env=home_env)
+        syntax_summary.append("ssh config")
+
+    log(f"  syntax: OK ({', '.join(syntax_summary)})")
 
 
 def lint_managed_scripts(
@@ -156,6 +193,7 @@ def lint_managed_scripts(
     has_bash = shutil.which("bash") is not None
     has_shellcheck = shutil.which("shellcheck") is not None
 
+    log(f"  scripts ({len(scripts)} managed):")
     for rel_script in scripts:
         if target_os == "windows":
             assert not rel_script.endswith(".sh"), f"Unix shell script should be ignored on Windows: {rel_script}"
@@ -166,24 +204,31 @@ def lint_managed_scripts(
         script_file = tmp / Path(rel_script).name
         script_file.write_text(rendered, encoding="utf-8")
 
+        checks = ["rendered"]
         if rel_script.endswith(".sh") and CURRENT_OS != "windows":
             assert rendered.startswith("#!"), f"Shell script missing shebang: {rel_script}"
+            checks.append("shebang")
             if has_bash:
                 run(["bash", "-n", str(script_file)])
+                checks.append("bash -n")
             if has_shellcheck:
                 sc_cmd = ["shellcheck", "-s", "bash"]
                 # Allow intentionally short-circuited scripts (`exit 0` at top).
                 if "\nexit 0\n" in rendered:
                     sc_cmd += ["-e", "SC2317"]
                 run(sc_cmd + [str(script_file)])
+                checks.append("shellcheck")
         elif rel_script.endswith(".ps1") and CURRENT_OS == "windows":
             parse_powershell(script_file)
+            checks.append("pwsh parse")
+
+        log(f"    - {rel_script} ({', '.join(checks)} OK)")
 
 
 def test_native_profiles() -> None:
     """Verify init, apply, verify, and syntax checks on the host OS across profiles."""
     for profile, enable_op in [("personal", True), ("personal", False), ("g", False)]:
-        print(f"[{CURRENT_OS}] profile={profile}, enable_onepassword={enable_op}")
+        log(f"\n=== [{CURRENT_OS}] profile={profile}, enable_onepassword={enable_op} ===")
         tmp = Path(tempfile.mkdtemp(prefix="chezmoi-test-"))
         try:
             dest = tmp / "home"
@@ -195,6 +240,9 @@ def test_native_profiles() -> None:
             run(chezmoi_cmd(dest, cfg, state, "data"))
             run(chezmoi_cmd(dest, cfg, state, "apply", "--exclude", "scripts,externals"))
             run(chezmoi_cmd(dest, cfg, state, "verify", "--exclude", "scripts,externals"))
+
+            applied_files = sum(1 for p in dest.rglob("*") if p.is_file() or p.is_symlink())
+            log(f"  apply & verify: OK ({applied_files} files/symlinks applied, idempotent)")
 
             validate_applied_files(dest, profile=profile, enable_onepassword=enable_op)
             lint_managed_scripts(dest, cfg, state, tmp)
@@ -216,7 +264,7 @@ def test_script_matrix() -> None:
     ]
 
     for name, profile, enable_op, chezmoi_override in matrix:
-        print(f"[matrix] {name}")
+        log(f"\n=== [matrix] {name} (profile={profile}, os={chezmoi_override['os']}) ===")
         tmp = Path(tempfile.mkdtemp(prefix=f"chezmoi-matrix-{name}-"))
         try:
             dest = tmp / "home"
@@ -240,7 +288,7 @@ def test_script_matrix() -> None:
 def main() -> int:
     test_native_profiles()
     test_script_matrix()
-    print("All chezmoi checks passed!")
+    log("\nAll chezmoi checks passed!")
     return 0
 
 
