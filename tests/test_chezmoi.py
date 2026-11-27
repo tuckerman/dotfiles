@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Generic, low-maintenance validation suite for chezmoi dotfiles.
 
-Checks structural invariants rather than specific filenames or values so adding,
-renaming, or removing dotfiles/scripts doesn't require updating tests.
+Checks structural invariants and core smoke assertions so adding, renaming,
+or removing dotfiles/scripts rarely requires updating tests.
 """
 
 from __future__ import annotations
@@ -57,7 +57,7 @@ def chezmoi_cmd(dest: Path, cfg: Path, state: Path, *args: str) -> list[str]:
     ]
 
 
-def init_chezmoi(dest: Path, cfg: Path, state: Path, *, profile: str, enable_onepassword: bool) -> None:
+def init_chezmoi(dest: Path, cfg: Path, state: Path, *, profile: str, enable_onepassword: bool) -> dict:
     run(
         chezmoi_cmd(
             dest,
@@ -73,6 +73,15 @@ def init_chezmoi(dest: Path, cfg: Path, state: Path, *, profile: str, enable_one
             "--promptDefaults",
         )
     )
+    assert cfg.is_file(), f"chezmoi init did not create {cfg}"
+    parsed = tomllib.loads(cfg.read_text(encoding="utf-8"))
+    assert parsed["data"]["profile"] == profile
+    assert parsed["data"]["email"] == "test@example.com"
+    assert parsed["data"]["enable_onepassword"] is enable_onepassword
+    assert parsed["data"]["default_shell"]
+    assert parsed["age"]["identity"]
+    assert parsed["age"]["recipient"]
+    return parsed
 
 
 def parse_powershell(ps_path: Path) -> None:
@@ -87,10 +96,34 @@ def parse_powershell(ps_path: Path) -> None:
     run([pwsh, "-NoProfile", "-NonInteractive", "-Command", script])
 
 
-def validate_applied_files(dest: Path) -> None:
-    """Syntax-check all applied config files by type, without hardcoding paths."""
+def validate_applied_files(dest: Path, *, profile: str, enable_onepassword: bool) -> None:
+    """Verify core bedrock files, toggle canaries, and generic syntax checks."""
     home_env = {**os.environ, "HOME": str(dest)}
 
+    # Core cross-platform files that should always exist.
+    for rel in [
+        ".config/git/config",
+        ".ssh/config",
+        ".vim/vimrc",
+        ".editorconfig",
+        ".config/starship.toml",
+    ]:
+        assert (dest / rel).is_file(), f"Missing expected core file: {rel}"
+
+    # OS-specific bedrock shell entrypoints.
+    if CURRENT_OS == "windows":
+        assert (dest / "Documents/PowerShell/Microsoft.PowerShell_profile.ps1").is_file()
+        assert not (dest / ".zshenv").exists(), "Unix symlink .zshenv should not exist on Windows"
+    else:
+        zshenv = dest / ".zshenv"
+        assert zshenv.is_symlink() and zshenv.is_file(), ".zshenv should be a valid symlink"
+        assert (dest / ".config/zsh/.zshrc").is_file()
+
+    # Conditional-ignore canaries (one per toggle).
+    assert (dest / ".config/git/signing.gitconfig").is_file() is enable_onepassword
+    assert (dest / ".ssh/config.d/personal").is_file() is (profile == "personal")
+
+    # Generic syntax checks for all applied config files by type.
     for path in sorted(dest.rglob("*")):
         if not path.is_file():
             continue
@@ -101,13 +134,9 @@ def validate_applied_files(dest: Path) -> None:
         elif path.suffix == ".ps1":
             parse_powershell(path)
 
-    git_cfg = dest / ".config" / "git" / "config"
-    if git_cfg.is_file():
-        run(["git", "config", "--list", "--includes", "--file", str(git_cfg)], env=home_env)
-
-    ssh_cfg = dest / ".ssh" / "config"
-    if ssh_cfg.is_file() and CURRENT_OS != "windows" and shutil.which("ssh"):
-        run(["ssh", "-G", "-F", str(ssh_cfg), "github.com"], env=home_env)
+    run(["git", "config", "--list", "--includes", "--file", str(dest / ".config/git/config")], env=home_env)
+    if CURRENT_OS != "windows" and shutil.which("ssh"):
+        run(["ssh", "-G", "-F", str(dest / ".ssh/config"), "github.com"], env=home_env)
 
 
 def lint_managed_scripts(
@@ -122,6 +151,7 @@ def lint_managed_scripts(
     extra = ["--override-data", json.dumps(override)] if override else []
     managed = run(chezmoi_cmd(dest, cfg, state, *extra, "managed", "--include", "scripts")).stdout
     scripts = [line.strip() for line in managed.splitlines() if line.strip()]
+    assert scripts, f"Expected at least one managed script for target_os={target_os}"
 
     has_bash = shutil.which("bash") is not None
     has_shellcheck = shutil.which("shellcheck") is not None
@@ -162,12 +192,11 @@ def test_native_profiles() -> None:
             state = tmp / "state.boltdb"
 
             init_chezmoi(dest, cfg, state, profile=profile, enable_onepassword=enable_op)
-            tomllib.loads(cfg.read_text(encoding="utf-8"))
             run(chezmoi_cmd(dest, cfg, state, "data"))
             run(chezmoi_cmd(dest, cfg, state, "apply", "--exclude", "scripts,externals"))
             run(chezmoi_cmd(dest, cfg, state, "verify", "--exclude", "scripts,externals"))
 
-            validate_applied_files(dest)
+            validate_applied_files(dest, profile=profile, enable_onepassword=enable_op)
             lint_managed_scripts(dest, cfg, state, tmp)
         finally:
             rmtree_force(tmp)
